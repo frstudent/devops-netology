@@ -59,9 +59,9 @@ ____
 
 ## Тест поиска наименьшего элемента в масиве
 
-Пример запуска теста bash test min.go min_test.go
+Пример запуска теста _go test min.go min_test.go_
 
-```golang
+```go
 package main
 
 import (
