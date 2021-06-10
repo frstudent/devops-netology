@@ -1,0 +1,106 @@
+﻿# 7.5. Основы golang
+
+## Программа перевода метров в футы
+
+```golang
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Print("Enter a meters: ")
+    var input float64
+    fmt.Scanf("%f", &input)
+
+    output := input / 0.3048
+
+    fmt.Printf("%.2f meter(s) is %.5f foots\n", input, output)    
+}
+```
+____
+
+## Программа поиска наименьшего элемента в масиве
+
+```golang
+package main
+
+import "fmt"
+
+func my_min(x [] int) (int, int, error) {
+  if len(x) == 0 {
+    return 0,0, fmt.Errorf("Array is empty")
+  }
+  min := x[0]
+  idx := 0
+  for i, v := range x {
+    if v < min {
+       idx = i
+       min = v
+    }
+  }
+  return min, idx, nil
+}
+
+func main() {
+  x := []int{48,96,86,68,57,82,63,70,37,34,83,27,19,97,9,17,}
+
+  min, idx, err  := my_min(x)
+
+  if err != nil {
+    fmt.Printf("Error: %s\n", err)
+    return
+  }
+
+  fmt.Println("List: ", x)
+  fmt.Printf("Minimal element %d at position %d\n", min, idx)
+}
+```
+____
+
+## Тест поиска наименьшего элемента в масиве
+
+
+```golang
+package main
+
+import (
+    "testing"
+)
+
+func TestCircle(t *testing.T) {
+    x := []int{48,96,86,68,57,82,63,70,37,34,83,27,19,97,9,17,}
+    good, _, err := my_min(x)
+    if (good != 9) || (err != nil) {
+	t.Fatalf("Want %v, but got %v", good, 9)
+    }
+
+    var y  []int
+    _, _, err = my_min(y)
+    if err == nil {
+	t.Fatalf("Empty array not detected")
+    }
+
+    _, _, err = my_min(nil)
+    if err == nil {
+	t.Fatalf("Empty array not detected")
+    }
+}
+```
+____
+
+## Вывод всех чисел от 1 до 100, которые без остатка делятся на 3
+
+```golang
+package main
+
+import "fmt"
+
+func main() {
+  for i:=1; i<=100; i++ {
+    if i % 3 == 0 {
+      fmt.Print(i, " ")
+    }
+  }
+  fmt.Println()
+}
+```
