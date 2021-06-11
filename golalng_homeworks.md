@@ -108,12 +108,12 @@ func TestCircle(t *testing.T) {
     var y  []int
     _, _, err = my_min(y)
     if err == nil {
-	t.Fatalf("Empty array not detected")
+	t.Fatalf("Empty array detected")
     }
 
     _, _, err = my_min(nil)
     if err == nil {
-	t.Fatalf("Empty array not detected")
+	t.Fatalf("Empty array detected")
     }
 }
 ```
