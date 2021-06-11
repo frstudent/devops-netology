@@ -133,10 +133,15 @@ func Квадратный_корень(x float64) float64 {
   return z
 }
 
+// Это пошло. Но работает. Не делайте так.
 func Очистка_экрана() {
         cmd := exec.Command("clear") //Linux example, its tested
         cmd.Stdout = os.Stdout
         cmd.Run()
+}
+
+func ClearScreen() {
+    fmt.Printf("\033c")
 }
 
 func Получение_числа() float64 {
@@ -154,7 +159,14 @@ func Получение_числа() float64 {
 }
 
 func main() {
-    number := Получение_числа()
-    fmt.Println( "Корнем числа", number, "является ", Квадратный_корень(number))
+    var number float64
+    if len(os.Args) == 1 {
+        ClearScreen()
+        fmt.Println("Use:\nsqrt <number>\n  где <number> это неотрицательное число\n  пример: sqrt 81")
+        os.Exit(1)
+    } else {
+        number = Получение_числа()
+    }
+    fmt.Println( "Корнем числа", number, "является", Квадратный_корень(number))
 }
 ```
