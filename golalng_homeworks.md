@@ -112,7 +112,7 @@ $ _go build sqrt.go_
 Для вычисления корня используй команду  
 $ _go run sqrt.go <число>_  
 или  
-_./sqrt <число>_  
+$ _./sqrt <число>_  
 
 ```golang
 more sqrt.go
