@@ -5,16 +5,46 @@
 ```golang
 package main
 
-import "fmt"
+import (
+    "fmt"
+    "path"
+    "os"
+    "strconv"
+)
+
+func getNumber() float64 {
+    number, err := strconv.ParseFloat( os.Args[1], 64)
+    if err != nil {
+        // handle error
+        fmt.Println(err)
+        os.Exit(2)
+    }
+    return float64(number)
+}
+
 
 func main() {
-    fmt.Print("Enter a meters: ")
-    var input float64
-    fmt.Scanf("%f", &input)
+    var input, output float64
 
-    output := input / 0.3048
+    if len(os.Args) == 1 {
+        fmt.Print("Enter a meters: ")
+        fmt.Scanf("%f", &input)
+    } else {
+        input = getNumber()
+    }
 
-    fmt.Printf("%.2f meter(s) is %.5f foots\n", input, output)    
+    switch path.Base(os.Args[0]) {
+        case "m2f": {
+            output = input / 0.3048
+            fmt.Printf("%.2f meter(s) is %.05f foots\n", input, output)
+        }
+        case "f2m": {
+            output = input * 0.3048
+            fmt.Printf("%.2f foot(s) is %.05f meterss\n", input, output)
+        }
+        default:
+            fmt.Println("only m2f and f2m supported")
+    }
 }
 ```
 ____
