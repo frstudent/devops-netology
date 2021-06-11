@@ -105,3 +105,57 @@ func main() {
   fmt.Println()
 }
 ```
+
+## Программное извлечение квадратного корня
+Для сборки используйте команду
+$ _go build sqrt.go_
+Для вычисления корня используй команду
+$ _go run sqrt.go <число>_
+или
+_./sqrt <число>_
+
+```golang
+more sqrt.go
+package main
+
+import (
+    "fmt"
+    "os"
+    "os/exec"
+    "strconv"
+)
+
+func Квадратный_корень(x float64) float64 {
+  z := 1.0
+  for i:=0; i<16; i++ {
+    z -= (z*z - x) / (2*z)
+//    fmt.Println(i,z)
+  }
+  return z
+}
+
+func Очистка_экрана() {
+        cmd := exec.Command("clear") //Linux example, its tested
+        cmd.Stdout = os.Stdout
+        cmd.Run()
+}
+
+func Получение_числа() float64 {
+    number, err := strconv.Atoi( os.Args[1])
+    if err != nil {
+        // handle error
+        fmt.Println(err)
+        os.Exit(2)
+    }
+    return float64(number)
+}
+
+func main() {
+    number := Получение_числа()
+    if number < 0 {
+        fmt.Println("Невозможно извлечь корень из отрицательного числа")
+        os.Exit(3)
+    }
+    fmt.Println( "Корнем числа", number, "являктся ", Квадратный_корень(number))
+}
+```
