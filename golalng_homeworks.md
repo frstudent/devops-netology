@@ -146,15 +146,15 @@ func Получение_числа() float64 {
         fmt.Println(err)
         os.Exit(2)
     }
+    if number < 0 {
+        fmt.Println("Невозможно извлечь корень из отрицательного числа")
+        os.Exit(3)
+    }
     return float64(number)
 }
 
 func main() {
     number := Получение_числа()
-    if number < 0 {
-        fmt.Println("Невозможно извлечь корень из отрицательного числа")
-        os.Exit(3)
-    }
     fmt.Println( "Корнем числа", number, "является ", Квадратный_корень(number))
 }
 ```
