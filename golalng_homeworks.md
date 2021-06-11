@@ -114,8 +114,7 @@ $ _go run sqrt.go <число>_
 или  
 $ _./sqrt <число>_  
 
-```golang
-more sqrt.go
+```golang sqrt.go
 package main
 
 import (
