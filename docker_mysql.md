@@ -75,7 +75,7 @@ Enter password:
 ERROR 1046 (3D000) at line 22: No database selected
 ```
 
-Первый комом. Бывает. Пробуем добавить аргемент
+Первый блин комом. Бывает. Пробуем добавить аргумент
 
 <pre>
 mysql -uroot -p 
@@ -160,3 +160,19 @@ mysql> SELECT * from mysql.user where User="test";
 
 </pre>
 
+## Задача №3
+
+<pre>
+mysql> use mydigits;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> show table status;
++--------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+---------------------+------------+--------------------+----------+----------------+---------+
+| Name   | Engine | Version | Row_format | Rows | Avg_row_length | Data_length | Max_data_length | Index_length | Data_free | Auto_increment | Create_time         | Update_time         | Check_time | Collation          | Checksum | Create_options | Comment |
++--------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+---------------------+------------+--------------------+----------+----------------+---------+
+| orders | InnoDB |      10 | Dynamic    |    5 |           3276 |       16384 |               0 |            0 |         0 |              6 | 2021-06-12 20:05:32 | 2021-06-12 20:05:35 | NULL       | utf8mb4_0900_ai_ci |     NULL |                |         |
++--------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+---------------------+------------+--------------------+----------+----------------+---------+
+1 row in set (0.00 sec)
+</pre>
