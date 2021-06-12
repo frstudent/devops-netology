@@ -245,7 +245,7 @@ alman=> INSERT INTO clients (surname, locate, order_id ) VALUES
 ```
 
 ### А это добавление покупок другим способом
-
+Поскольку задание указывает лишь имена кастомеров, то будем считать их однофамильцами и раскидаем их по миру.
 ```sql
 alman=>  WITH ins (surname, locate, item_name) AS
 ( VALUES
