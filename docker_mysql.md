@@ -2,7 +2,7 @@
 
 ## Установка docker контейнера  mysql
 
-Обязательно выбирите версию 8. У меня были проблемы со стартом на latest версии.
+Обязательно выбtрите версию 8. У меня были проблемы со стартом на latest версии.
 ```bash
 docker run --name mys  -p3306:3306 \
     -v /var/mys_data:/var/lib/mysql \
@@ -93,26 +93,6 @@ Enter password:
 
 /home# mysql -uroot -p --database=mydigits
 
-mysql> show tables;
-+--------------------+
-| Tables_in_mydigits |
-+--------------------+
-| orders             |
-+--------------------+
-1 row in set (0.00 sec)
-
-mysql> select * from orders;
-+----+-----------------------+-------+
-| id | title                 | price |
-+----+-----------------------+-------+
-|  1 | War and Peace         |   100 |
-|  2 | My little pony        |   500 |
-|  3 | Adventure mysql times |   300 |
-|  4 | Server gravity falls  |   300 |
-|  5 | Log gossips           |   123 |
-+----+-----------------------+-------+
-5 rows in set (0.00 sec)
-
 mysql> show table status;
 
 mysql> SELECT * FROM information_schema.tables WHERE table_schema = DATABASE();
@@ -123,5 +103,21 @@ mysql> SELECT * FROM information_schema.tables WHERE table_schema = DATABASE();
 +---------------+--------------+------------+------------+--------+---------+------------+------------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+---------------------+------------+--------------------+----------+----------------+---------------+
 1 row in set (0.01 sec)
 
+mysql> show tables;
++--------------------+
+| Tables_in_mydigits |
++--------------------+
+| orders             |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> select * from orders where price > 300;
++----+----------------+-------+
+| id | title          | price |
++----+----------------+-------+
+|  2 | My little pony |   500 |
++----+----------------+-------+
+1 row in set (0.00 sec)
 </pre>
 
+## Задача №2
