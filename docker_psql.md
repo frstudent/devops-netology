@@ -16,9 +16,9 @@ docker run --name pg -p5432:5432 \
    -d postgres
 ```
 
-## Звдвяв №2
+## Задача №2
 
-Интерактивный запуск shell в контейнере и старть psql
+Интерактивный запуск shell в контейнере и старт psql
 ```bash
 docker exec -it pg bash
 su postgres
@@ -46,7 +46,7 @@ create type residence as ( country varchar(32), country_id integer);
 create table clients ( id serial primary key, surname varchar(32) not null, locate residence not null, order_id integer references orders(id) not null);
 ```
 
-##№ Список баз данных:
+### Список баз данных:
 
 ```sql
 postgres=# \l
@@ -66,7 +66,7 @@ postgres=# \l
 (4 rows)
 </pre>
 
-## Список таблиц:
+### Список таблиц:
 
 ```sql
 alman=> \dt
@@ -98,7 +98,7 @@ alman=> \d residence
  country_id | integer               |           |          |
 ```
 
-## Описание таблицы orders
+### Описание таблицы orders
 
 ```sql
 alman=> \d orders
