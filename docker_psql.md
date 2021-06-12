@@ -1,24 +1,57 @@
-﻿# Задание по докеру и sql
+﻿# Задание 6.2 -  докер и sql
 
+## Задача №1
 
-```sql
-> create database alman;
-> create user netology password '123';
-> grant all on database alman to netology;
+Создание контейнера для posgresql с двумя томами  
+
+```bash
+mkdir /var/pg_data
+chmod 077 /var/pg_data
+mkdir /var/pg_backup
+chmod 0777 /var/pg_packup
+docker run --name pg -p5432:5432 \
+  -e POSTGRES_PASSWORD=pass \
+  -v /var/pg_data:/var/lib/postgresql/data \
+  -v /var/pg_backup:/home \
+   -d postgres
 ```
 
-$ psql -U netology -W alman
+## Звдвяв №2
 
+Интерактивный запуск shell в контейнере и старть psql
+```bash
+docker exec -it pg bash
+su postgres
+psql
+```
+
+Создание базы данных, владельца базы и установка его прав
+```sql
+create database alman;
+create user netology password '123';
+grant all on database alman to netology;
+\q
+```
+
+Вход под пользователем netology. Утилита psql запросит пароль. 
+
+```bash
+$ psql -U netology -W alman
+```
+
+Создание таблиц из задания
 ```sql
 create table orders ( id serial primary key, item varchar(128), price numeric(6,2) );
 create type residence as ( country varchar(32), country_id integer);
 create table clients ( id serial primary key, surname varchar(32) not null, locate residence not null, order_id integer references orders(id) not null);
 ```
 
-## Список баз данных:
+##№ Список баз данных:
 
-```shell
+```sql
 postgres=# \l
+```
+<pre>
                                  List of databases
    Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges
 -----------+----------+----------+------------+------------+-----------------------
@@ -31,7 +64,7 @@ postgres=# \l
  template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
            |          |          |            |            | postgres=CTc/postgres
 (4 rows)
-```
+</pre>
 
 ## Список таблиц:
 
@@ -124,7 +157,6 @@ order by table_name, grantee;
  orders     | test_user | UPDATE
  orders     | test_user | INSERT
 (22 rows)
-```
 </pre>
 
 ### Вставка данных в таблицу orders:
@@ -199,7 +231,9 @@ alman=> select  (
 (1 row)
 ```
 
-## Добавление покупок
+## №4
+
+### Добавление покупок
 
 ```sql
 alman=> INSERT INTO clients (surname, locate, order_id ) VALUES
@@ -208,7 +242,7 @@ alman=> INSERT INTO clients (surname, locate, order_id ) VALUES
     ( 'Иоганн Себастьян Бах', '("Germany", 49)',  (SELECT id from orders WHERE item = 'Гитара') );
 ```
 
-## А это у меня не заработало пока
+### А это добавление покупок другим способом
 
 ```sql
 alman=>  WITH ins (surname, locate, item_name) AS
@@ -227,7 +261,7 @@ FROM
 
 ```
 
-## А теперь проверка что всё вставлось как надо
+### А теперь проверка что всё вставлось как надо
 
 ```sql
 SELECT
@@ -254,3 +288,75 @@ FROM clients
 (11 rows)
 </pre>
 
+## Задача №5
+
+### Анализ выполнения запросы
+```sql
+explain analyze SELECT
+  clients.id, clients.surname, clients.locate, orders.item, orders.price
+FROM clients
+  INNER JOIN orders
+    ON clients.order_id = orders.id ;
+```
+
+Да вроде работает.
+<pre>
+
+                                                   QUERY PLAN
+-----------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=15.62..32.46 rows=540 width=406) (actual time=0.092..0.103 rows=11 loops=1)
+   Hash Cond: (clients.order_id = orders.id)
+   ->  Seq Scan on clients  (cost=0.00..15.40 rows=540 width=122) (actual time=0.022..0.024 rows=11 loops=1)
+   ->  Hash  (cost=12.50..12.50 rows=250 width=292) (actual time=0.024..0.025 rows=5 loops=1)
+         Buckets: 1024  Batches: 1  Memory Usage: 9kB
+         ->  Seq Scan on orders  (cost=0.00..12.50 rows=250 width=292) (actual time=0.013..0.016 rows=5 loops=1)
+ Planning Time: 0.218 ms
+ Execution Time: 0.151 ms
+(8 rows)
+</pre>
+
+Как бы вот.
+
+## Задача 6
+
+Бэкап базы данных:  
+```bash
+pg_dump -U netology -W -F t alman | gzip > backup_file.tar.gz
+pg_dump -U netology -W -s -F t alman | gzip > backup_file.tar.gz
+```
+
+Создание нового контейнера. Поскольку задание учебное, volume для данных не поднимаю
+```bash
+docker stop pg
+docker run --name pg2 -p5432:5432 \
+  -e POSTGRES_PASSWORD=pass \
+  -v /var/pg_backup:/home \
+   -d postgres
+root@frcloud4:~# docker ps -a
+```
+<pre>
+CONTAINER ID   IMAGE      COMMAND                  CREATED          STATUS                          PORTS                                       NAMES
+d2e296633317   postgres   "docker-entrypoint.s…"   18 seconds ago   Up 14 seconds                   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   pg2
+c0a94e3b9a03   postgres   "docker-entrypoint.s…"   13 hours ago     Exited (0) About a minute ago                                               pg
+</pre>
+
+```bash
+docker exec -it pg2 bash
+psql -U netology -W alman
+```
+<pre>
+Password:
+psql: error: FATAL:  role "netology" does not exist```
+</pre>
+
+Восстановление базы данных из юэкапа  
+```bash
+cd /home
+createdb alman
+psql
+create user netology;
+create user test_user;
+\q
+gzip -dc backup_file.tar.gz | pg_restore -s -c --dbname alman
+psql -U netology -W alman
+```
