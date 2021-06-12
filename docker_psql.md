@@ -159,6 +159,8 @@ order by table_name, grantee;
 (22 rows)
 </pre>
 
+## Задача №3
+
 ### Вставка данных в таблицу orders:
 
 ```sql
