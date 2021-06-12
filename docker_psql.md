@@ -294,16 +294,16 @@ FROM clients
 
 ### Анализ выполнения запросы
 ```sql
-explain analyze SELECT
+explain analyze 
+SELECT
   clients.id, clients.surname, clients.locate, orders.item, orders.price
 FROM clients
   INNER JOIN orders
     ON clients.order_id = orders.id ;
 ```
 
-Да вроде работает.
+Результат выполнения звпроса:  
 <pre>
-
                                                    QUERY PLAN
 -----------------------------------------------------------------------------------------------------------------
  Hash Join  (cost=15.62..32.46 rows=540 width=406) (actual time=0.092..0.103 rows=11 loops=1)
@@ -317,14 +317,15 @@ FROM clients
 (8 rows)
 </pre>
 
-Как бы вот.
+Из вывода explain analyze можно судить судить о времени запроса. Я полностью не уверен, однако могу предположить что
+здесь показаны три операции и затраченное время, снизу вверх - выборка данных из таблицы orders, время слияние таблиц clients и оrders, 
+выборка таблицы clients. Если бы мне потребовалось оптимизировать запрос, я бы его менял и оценивал результат вывода.
 
 ## Задача 6
 
 Бэкап базы данных:  
 ```bash
 pg_dump -U netology -W -F t alman | gzip > backup_file.tar.gz
-pg_dump -U netology -W -s -F t alman | gzip > backup_file.tar.gz
 ```
 
 Создание нового контейнера. Поскольку задание учебное, volume для данных не поднимаю
@@ -351,7 +352,7 @@ Password:
 psql: error: FATAL:  role "netology" does not exist```
 </pre>
 
-Восстановление базы данных из юэкапа  
+Восстановление базы данных из бэкапа  
 ```bash
 cd /home
 createdb alman
@@ -359,6 +360,49 @@ psql
 create user netology;
 create user test_user;
 \q
-gzip -dc backup_file.tar.gz | pg_restore -s -c --dbname alman
+gzip -dc backup_file.tar.gz | pg_restore -C --dbname alman -v
 psql -U netology -W alman
 ```
+
+Судя по логу (ключ -v) база данных восстановилась во вновь созданном контейнере. Но проверить не помешат:
+<pre>
+postgres@d2e296633317:/home$ psql -U netology -W alman
+Password:
+psql (13.3 (Debian 13.3-1.pgdg100+1))
+Type "help" for help.
+
+alman=> \c alman
+Password:
+You are now connected to database "alman" as user "netology".
+alman=> \dt
+          List of relations
+ Schema |  Name   | Type  |  Owner
+--------+---------+-------+----------
+ public | clients | table | netology
+ public | orders  | table | netology
+(2 rows)
+
+alman=> SELECT
+alman->   clients.id, clients.surname, clients.locate, orders.item, orders.price
+alman-> FROM clients
+alman->   INNER JOIN orders
+alman->     ON clients.order_id = orders.id ;
+ id |       surname        |    locate     |  item   |  price
+----+----------------------+---------------+---------+---------
+  1 | Иванов Иван Иванович | (USA,1)       | Шоколад |   10.00
+  2 | Петров Петр Петрович | (Canada,1)    | Принтер | 3000.00
+  3 | Иоганн Себастьян Бах | (Japan,81)    | Книга   |  500.00
+  4 | Ронни Джеймс Дио     | (Russia,7)    | Монитор | 7000.00
+  5 | Ritchie Blackmore    | (Russia,7)    | Гитара  | 4000.00
+  6 | Иванов Иван Иванович | (Ukraine,380) | Книга   |  500.00
+  7 | Петров Петр Петрович | (Belarus,375) | Монитор | 7000.00
+  8 | Иоганн Себастьян Бах | (Germany,49)  | Гитара  | 4000.00
+  9 | Иванов Иван Иванович | (Estonia,372) | Книга   |  500.00
+ 10 | Петров Петр Петрович | (Russia,7)    | Монитор | 7000.00
+ 11 | Иоганн Себастьян Бах | (France,33)   | Гитара  | 4000.00
+(11 rows)
+
+alman=>
+</pre>
+
+Ура! База данных восстановилась из бэкапа!
