@@ -175,4 +175,93 @@ mysql> show table status;
 | orders | InnoDB |      10 | Dynamic    |    5 |           3276 |       16384 |               0 |            0 |         0 |              6 | 2021-06-12 20:05:32 | 2021-06-12 20:05:35 | NULL       | utf8mb4_0900_ai_ci |     NULL |                |         |
 +--------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+---------------------+------------+--------------------+----------+----------------+---------+
 1 row in set (0.00 sec)
+
+mysql> SELECT CONCAT('ALTER TABLE ',table_schema,'.',table_name,' engine=MyISAM;') 
+         FROM information_schema.tables 
+         WHERE engine = 'InnoDB';
+
++---------------------------------------------------------------------------------------+
+| CONCAT('ALTER TABLE ',table_schema,'.',table_name,' engine=MyISAM;')                  |
++---------------------------------------------------------------------------------------+
+| ALTER TABLE mydigits.orders engine=MyISAM;                                            |
+| ALTER TABLE mysql.columns_priv engine=MyISAM;                                         |
+| ALTER TABLE mysql.component engine=MyISAM;                                            |
+| ALTER TABLE mysql.db engine=MyISAM;                                                   |
+| ALTER TABLE mysql.default_roles engine=MyISAM;                                        |
+| ALTER TABLE mysql.engine_cost engine=MyISAM;                                          |
+| ALTER TABLE mysql.func engine=MyISAM;                                                 |
+| ALTER TABLE mysql.global_grants engine=MyISAM;                                        |
+| ALTER TABLE mysql.gtid_executed engine=MyISAM;                                        |
+| ALTER TABLE mysql.help_category engine=MyISAM;                                        |
+| ALTER TABLE mysql.help_keyword engine=MyISAM;                                         |
+| ALTER TABLE mysql.help_relation engine=MyISAM;                                        |
+| ALTER TABLE mysql.help_topic engine=MyISAM;                                           |
+| ALTER TABLE mysql.innodb_index_stats engine=MyISAM;                                   |
+| ALTER TABLE mysql.innodb_table_stats engine=MyISAM;                                   |
+| ALTER TABLE mysql.orders engine=MyISAM;                                               |
+| ALTER TABLE mysql.password_history engine=MyISAM;                                     |
+| ALTER TABLE mysql.plugin engine=MyISAM;                                               |
+| ALTER TABLE mysql.procs_priv engine=MyISAM;                                           |
+| ALTER TABLE mysql.proxies_priv engine=MyISAM;                                         |
+| ALTER TABLE mysql.replication_asynchronous_connection_failover engine=MyISAM;         |
+| ALTER TABLE mysql.replication_asynchronous_connection_failover_managed engine=MyISAM; |
+| ALTER TABLE mysql.role_edges engine=MyISAM;                                           |
+| ALTER TABLE mysql.server_cost engine=MyISAM;                                          |
+| ALTER TABLE mysql.servers engine=MyISAM;                                              |
+| ALTER TABLE mysql.slave_master_info engine=MyISAM;                                    |
+| ALTER TABLE mysql.slave_relay_log_info engine=MyISAM;                                 |
+| ALTER TABLE mysql.slave_worker_info engine=MyISAM;                                    |
+| ALTER TABLE mysql.tables_priv engine=MyISAM;                                          |
+| ALTER TABLE mysql.time_zone engine=MyISAM;                                            |
+| ALTER TABLE mysql.time_zone_leap_second engine=MyISAM;                                |
+| ALTER TABLE mysql.time_zone_name engine=MyISAM;                                       |
+| ALTER TABLE mysql.time_zone_transition engine=MyISAM;                                 |
+| ALTER TABLE mysql.time_zone_transition_type engine=MyISAM;                            |
+| ALTER TABLE mysql.user engine=MyISAM;                                                 |
+| ALTER TABLE sys.sys_config engine=MyISAM;                                             |
++---------------------------------------------------------------------------------------+
+36 rows in set (0.02 sec)
+
+mysql> select * from orders;
++----+-----------------------+-------+
+| id | title                 | price |
++----+-----------------------+-------+
+|  1 | War and Peace         |   100 |
+|  2 | My little pony        |   500 |
+|  3 | Adventure mysql times |   300 |
+|  4 | Server gravity falls  |   300 |
+|  5 | Log gossips           |   123 |
++----+-----------------------+-------+
+5 rows in set (0.00 sec)
+
+mysql> show profiles;
++----------+------------+--------------------------------------------------------------------------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                                                                                                |
++----------+------------+--------------------------------------------------------------------------------------------------------------------------------------+
+|        1 | 0.00014250 | show database status                                                                                                                 |
+|        2 | 0.00014875 | show table status                                                                                                                    |
+|        3 | 0.00041375 | SELECT DATABASE()                                                                                                                    |
+|        4 | 0.00245600 | show databases                                                                                                                       |
+|        5 | 0.00337200 | show tables                                                                                                                          |
+|        6 | 0.00441950 | show table status                                                                                                                    |
+|        7 | 0.00067700 | select * from orders                                                                                                                 |
+|        8 | 0.00150825 | SELECT CONCAT('ALTER TABLE ',table_schema,'.',orders,' engine=MyISAM;')
+|        9 | 0.02071800 | SELECT CONCAT('ALTER TABLE ',table_schema,'.',table_name,' engine=MyISAM;')
+|       10 | 0.00065725 | select * from orders                                                                                                                 |
++----------+------------+--------------------------------------------------------------------------------------------------------------------------------------+
+10 rows in set, 1 warning (0.00 sec)
+
+mysql>
+</pre>
+
+Как видно из примерв, время выборки данных не изменилось после смены движка.
+Объясняется это очень просто, сработали три фактора: 
+1. Таблица очень маленькая и простая.
+2. Запрос прмитивный
+3. Отсутствие нагрузки.
+<pre>
+
+SELECT CONCAT('ALTER TABLE ',table_schema,'.',table_name,' engine=InnoDB;') 
+FROM information_schema.tables 
+WHERE engine = 'MyISAM';
 </pre>
