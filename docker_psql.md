@@ -114,7 +114,7 @@ Referenced by:
     TABLE "clients" CONSTRAINT "clients_order_id_fkey" FOREIGN KEY (order_id) REFERENCES orders(id)
 ```
 
-## Создание непривелигированного пользователя:
+## Создание непривелегированного пользователя:
 
 ```sql
 create user test_user;
@@ -233,7 +233,7 @@ alman=> select  (
 (1 row)
 ```
 
-## №4
+## Задача №4
 
 ### Добавление покупок
 
@@ -292,7 +292,7 @@ FROM clients
 
 ## Задача №5
 
-### Анализ выполнения запросы
+### Анализ выполнения запроса
 ```sql
 explain analyze 
 SELECT
@@ -356,10 +356,6 @@ psql: error: FATAL:  role "netology" does not exist```
 ```bash
 cd /home
 createdb alman
-psql
-create user netology;
-create user test_user;
-\q
 gzip -dc backup_file.tar.gz | pg_restore -C --dbname alman -v
 psql -U netology -W alman
 ```
