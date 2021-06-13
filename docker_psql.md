@@ -6,7 +6,7 @@
 
 ```bash
 mkdir /var/pg_data
-chmod 077 /var/pg_data
+chmod 0777 /var/pg_data
 mkdir /var/pg_backup
 chmod 0777 /var/pg_packup
 docker run --name pg -p5432:5432 \
