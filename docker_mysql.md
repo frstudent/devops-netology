@@ -64,18 +64,19 @@ Enter password:
 ERROR 1046 (3D000) at line 22: No database selected
 ```
 
-Исправленный пример доступа к базе данных
+Исправленный пример восстанволения базы из архивной копии
 
 ```bash
 root@99a26f69a799:/home# mysql -uroot -p --database=mydigits < test_dump.sql
+exit
 ```
-
 Проверка коректности импорта/восстановлени базы
 
 ```bash
-/home# mysql -uroot -p --database=mydigits
+root@99a26f69a799:/home# mysql -uroot -p --database=mydigits
 ```
 
+Проверка результата импорта базы данных
 ```mysql
 mysql> show table status;
 mysql> SELECT * FROM information_schema.tables WHERE table_schema = DATABASE();
@@ -85,7 +86,6 @@ mysql> SELECT * FROM information_schema.tables WHERE table_schema = DATABASE();
 | def           | mydigits     | orders     | BASE TABLE | InnoDB |      10 | Dynamic    |          5 |           3276 |       16384 |               0 |            0 |         0 |              6 | 2021-06-12 20:05:32 | 2021-06-12 20:05:35 | NULL       | utf8mb4_0900_ai_ci |     NULL |                |               |
 +---------------+--------------+------------+------------+--------+---------+------------+------------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+---------------------+------------+--------------------+----------+----------------+---------------+
 1 row in set (0.01 sec)
-
 mysql> show tables;
 +--------------------+
 | Tables_in_mydigits |
@@ -93,7 +93,6 @@ mysql> show tables;
 | orders             |
 +--------------------+
 1 row in set (0.00 sec)
-
 mysql> select * from orders where price > 300;
 +----+----------------+-------+
 | id | title          | price |
@@ -102,8 +101,7 @@ mysql> select * from orders where price > 300;
 +----+----------------+-------+
 1 row in set (0.00 sec)
 ```
-
-Данные восстановлены из резервной копии.
+Данные успешно восстановлены из резервной копии.
 
 ## Задача №2
 
