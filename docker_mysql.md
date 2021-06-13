@@ -2,10 +2,16 @@
 
 ## Установка docker контейнера  mysql
 
-Обязательно выбtрите версию 8. У меня были проблемы со стартом на latest версии.
+Текущая конфигурация контейнера созднана на основе последующих задач. 
+Корректная работа других задачи при изменении конфигурации не гарантируется.
+Скрипт для подкотовки и старта контенера
+_$ cat mysql.sh_
+
 ```bash
 mkdir /var/mys_data /var/mys_backup /var/mys_custom
 chmod 0777 /var/mys_data /var/mys_backup /var/mys_custom
+wget -o /var/msys_data/test_dump.sql \
+    https://raw.githubusercontent.com/netology-code/virt-homeworks/master/06-db-03-mysql/test_data/test_dump.sql
 docker run --name mys  -p3306:3306 \
     -v /var/mys_data:/var/lib/mysql \
     -v /var/mys_backup:/home \
@@ -15,7 +21,7 @@ docker run --name mys  -p3306:3306 \
     mysqld --default-authentication-plugin=mysql_native_password --pid-file=/var/lib/mysql/mysqld.pid
 ```
 
-И сразу же проверяем успешность установки, запустив интерактивную консольную утилиту в контейнере
+Проверяка успешность установки, послердством утилиту msql в контейнере
 ```bash
 docker exec -it mys mysql -uroot -p
 ```
@@ -35,41 +41,21 @@ affiliates. Other names may be trademarks of their respective
 owners.
 
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
-
-mysql>
+create database mydigits;
 </pre>
 
-Мы получили локальный доступ администратора к базе данных MySQL в контейнере.  
-Выходим из утрилиты и выходим контейнера. 
-Меняем рабочую директорию и скачиваем демо-базу. 
+Создание базы данных задания
 
-```bash
-cd /var/mys_backup
-wget https://raw.githubusercontent.com/netology-code/virt-homeworks/master/06-db-03-mysql/test_data/test_dump.sql
+```sql
+mysql> create database mydigits;
+mysql>\q
 ```
 
-Скачивается дамп демо-базы
-<pre>
---2021-06-12 13:54:16--  https://raw.githubusercontent.com/netology-code/virt-homeworks/master/06-db-03-mysql/test_data/test_dump.sql
-Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.110.133, 185.199.109.133, 185.199.108.133, ...
-Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.110.133|:443... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 2073 (2.0K) [text/plain]
-Saving to: ‘test_dump.sql’
-
-test_dump.sql                                   100%[===================================================>]   2.02K  --.-KB/s    in 0s
-
-2021-06-12 13:54:16 (17.3 MB/s) - ‘test_dump.sql’ saved [2073/2073]
-
-FINISHED --2021-06-12 13:54:16--
-Total wall clock time: 0.6s
-Downloaded: 1 files, 2.0K in 0s (17.3 MB/s)
-</pre>
-
-Наступило время поработать в контейнере
+Получилен локальный доступ с правами администратора и создана новая база в созданном контейнере.  
+Выход из утрилиты и контейнера. 
+Далее интерактивный старт bash в контенере
 ```bash
-/var/mys_backup# docker exec -it mys bash
-root@99a26f69a799:/#
+docker exec -it mys bash
 root@99a26f69a799:/# cd /home
 root@99a26f69a799:/home# ls
 test_dump.sql
@@ -78,25 +64,20 @@ Enter password:
 ERROR 1046 (3D000) at line 22: No database selected
 ```
 
-Первый блин комом. Бывает. Пробуем добавить аргумент
+Исправленный пример доступа к базе данных
 
-<pre>
-mysql -uroot -p 
-Enter password:
-mysql> create database mydigits;
-\q
+```bash
+root@99a26f69a799:/home# mysql -uroot -p --database=mydigits < test_dump.sql
+```
 
+Проверка коректности импорта/восстановлени базы
+
+```bash
 /home# mysql -uroot -p --database=mydigits
-mysql> use mydigits;
-Reading table information for completion of table and column names
-You can turn off this feature to get a quicker startup with -A
-                   root@99a26f69a799:/home# mysql -uroot -p --database=mydigits < test_dump.sql
-Enter password:
+```
 
-/home# mysql -uroot -p --database=mydigits
-
+```mysql
 mysql> show table status;
-
 mysql> SELECT * FROM information_schema.tables WHERE table_schema = DATABASE();
 +---------------+--------------+------------+------------+--------+---------+------------+------------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+---------------------+------------+--------------------+----------+----------------+---------------+
 | TABLE_CATALOG | TABLE_SCHEMA | TABLE_NAME | TABLE_TYPE | ENGINE | VERSION | ROW_FORMAT | TABLE_ROWS | AVG_ROW_LENGTH | DATA_LENGTH | MAX_DATA_LENGTH | INDEX_LENGTH | DATA_FREE | AUTO_INCREMENT | CREATE_TIME         | UPDATE_TIME         | CHECK_TIME | TABLE_COLLATION    | CHECKSUM | CREATE_OPTIONS | TABLE_COMMENT |
@@ -120,9 +101,13 @@ mysql> select * from orders where price > 300;
 |  2 | My little pony |   500 |
 +----+----------------+-------+
 1 row in set (0.00 sec)
-</pre>
+```
+
+Данные восстановлены из резервной копии.
 
 ## Задача №2
+
+Добавление пользователя с ограниченными правами
 
 <pre>
 mysql> SELECT * from mysql.user where User="root";
@@ -180,7 +165,7 @@ mysql> show table status;
 1 row in set (0.00 sec)
 </pre>
 
-Замена движка базы данных
+Замена движка таблицы
 
 <pre>
 mysql> ALTER TABLE `orders` ENGINE=MyISAM;
@@ -241,6 +226,7 @@ ALTER TABLE mydigits.orders engine=InnoDB;
 ## Задача №4
 
 Содержимое файла /var/mys/custom/netology.cnf
+При создании контейнера директория монтируеся в локальный volume
 <pre>
 [mysqld]
 
@@ -260,7 +246,7 @@ innodb_file_per_table
 innodb_flush_method=O_DIRECT
 </pre>
 
-Проверка установленных переменных
+Проверка установленных переменных после пересоздания контейнера
 
 ```sql
 SHOW VARIABLES WHERE 
