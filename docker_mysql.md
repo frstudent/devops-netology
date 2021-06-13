@@ -19,7 +19,7 @@ docker run --name mys  -p3306:3306 \
 ```bash
 docker exec -it mys mysql -uroot -p
 ```
-Не ошибаемся с паролем (в этом задании пароль - pass)  
+Не ошибаемся с паролем (в этом задании пароль: pass)  
 И видим следующий экран
 
 <pre>
@@ -226,7 +226,7 @@ mysql> show profiles;
 Как видно из примерв, время выборки данных не изменилось после смены движка.
 Объясняется это очень просто, сработали три фактора: 
 1. Таблица очень маленькая и простая.
-2. Запрос прмитивный
+2. Запрос примитивный.
 3. Отсутствие нагрузки.
 
 Вернуть движок InnoDB
@@ -259,3 +259,14 @@ innodb_log_buffer_size=100M
 innodb_file_per_table
 innodb_flush_method=O_DIRECT
 </pre>
+
+Проверка установленных переменных
+
+```sql
+SHOW VARIABLES WHERE 
+  Variable_Name LIKE 'innodb_buffer_pool_size' OR 
+  Variable_Name LIKE 'innodb_log_file_size' OR
+  Variable_Name LIKE 'innodb_log_buffer_size' OR
+  Variable_Name LIKE 'innodb_file_per_table' OR
+  Variable_Name LIKE 'innodb_flush_method';
+```
