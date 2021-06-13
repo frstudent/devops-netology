@@ -270,3 +270,15 @@ SHOW VARIABLES WHERE
   Variable_Name LIKE 'innodb_file_per_table' OR
   Variable_Name LIKE 'innodb_flush_method';
 ```
+<pre>
++-------------------------+-----------+
+| Variable_name           | Value     |
++-------------------------+-----------+
+| innodb_buffer_pool_size | 134217728 |
+| innodb_file_per_table   | ON        |
+| innodb_flush_method     | O_DIRECT  |
+| innodb_log_buffer_size  | 104857600 |
+| innodb_log_file_size    | 100663296 |
++-------------------------+-----------+
+5 rows in set (0.00 sec)
+</pre>
