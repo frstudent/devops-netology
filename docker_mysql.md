@@ -21,7 +21,7 @@ docker run --name mys  -p3306:3306 \
     mysqld --default-authentication-plugin=mysql_native_password --pid-file=/var/lib/mysql/mysqld.pid
 ```
 
-Проверка успешной установки послердством утилиты mysql в контейнере
+Проверка успешной установки посредством утилиты mysql в контейнере
 ```bash
 docker exec -it mys mysql -uroot -p
 ```
@@ -64,13 +64,14 @@ Enter password:
 ERROR 1046 (3D000) at line 22: No database selected
 ```
 
-Исправленный пример восстанволения базы из архивной копии
+Произошла ошика  
+Исправленный пример восстановления базы из архивной копии
 
 ```bash
 root@99a26f69a799:/home# mysql -uroot -p --database=mydigits < test_dump.sql
 exit
 ```
-Проверка коректности импорта/восстановлени базы
+Проверка корректности импорта базы
 
 ```bash
 root@99a26f69a799:/home# mysql -uroot -p --database=mydigits
