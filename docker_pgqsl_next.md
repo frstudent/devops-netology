@@ -193,8 +193,8 @@ cd /home; pg_dump -U postgres -W test_database > test_database_dump.sql
 
 > Как бы вы доработали бэкап-файл, чтобы добавить уникальность значения столбца title для таблиц test_database?
 
-Я бы не стал править бэкап-файл - пусть этим занимаются DBA инженеры.  
-По условию задачи база данных активна. Повесить UNIQUE для столбца title через констрейны postgres 8 не позволяет. mysql тоже. 
+По условию задачи база данных активна. 
+Повесить UNIQUE для столбца title через констрейны postgres 8 не позволяет. mysql тоже. 
 Происходил конфликт с разбиением на партиции. Вероятно решить эту задачу таким способом можно в коммерческих версиях продуктов. 
 Для решения задачи я использовал SQL - вынес поле titles в отдельную таблицу, создал primary key, сделал уникальным поле title.
 Затем создал новую таблицу с foreign key и range. Затем создал партиции для дешёвых и дорогих товаров.
@@ -326,6 +326,5 @@ alter table orders add unique key(title);
 create table "fix_orders" (id primary key, "title_ref" REFERENCE titiles (id), price integer );
  as select ("id", "title", "price") from "orders" 
 -->
-
-
+Задание дорабатывается...
 
