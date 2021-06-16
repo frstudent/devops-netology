@@ -99,7 +99,7 @@ root@2f5e8a4857a6:/home/in# su postgres
 postgres@2f5e8a4857a6:/home/in$ createdb test_database
 postgres@2f5e8a4857a6:/home/in$ cd /home/in
 postgres@2f5e8a4857a6:/home/in$ psql test_database < test_dump.sql
-postgres@2f5e8a4857a6:/home/in$ psql -W test_database
+postgres@2f5e8a4857a6:/home/in$ psql -W test_database < test_dump.sql
 ```
 
 <pre>
@@ -145,4 +145,184 @@ Password:
 (3 rows)
 </pre>
 
-Как же это интерпетировать?
+Как же это интерпетировать? Вероятно речь идёт о столбце avg_width  
+
+## Задача №3
+
+> провести разбиение таблицы orders на на две  
+На видеоуроке с 38-ой минуты
+
+```sql
+begin transaction;                                                                  	
+CREATE TABLE test_orders (id int, title varchar(80), price integer)  partition by range(price);
+CREATE TABLE cheap_orders PARTITION OF test_orders for values from(0) to (500);
+CREATE TABLE gross_orders PARTITION OF test_orders for values from (500) to (100000);
+INSERT INTO test_orders SELECT * FROM orders;
+ALTER TABLE orders RENAME TO deleting_orders;
+ALTER TABLE test_orders RENAME TO orders;
+DROP TABLE deleting_orders;
+commit;
+```
+
+Проверка разбиения на партиции.
+
+<pre>
+test_database=# \d+ orders
+                                 Partitioned table "public.test_orders"
+ Column |         Type          | Collation | Nullable | Default | Storage  | Stats target | Description
+--------+-----------------------+-----------+----------+---------+----------+--------------+-------------
+ id     | integer               |           |          |         | plain    |              |
+ title  | character varying(80) |           |          |         | extended |              |
+ price  | integer               |           |          |         | plain    |              |
+Partition key: RANGE (price)
+Partitions: cheap_orders FOR VALUES FROM (0) TO (499),
+            gross_orders FOR VALUES FROM (500) TO (100000)
+
+</pre>
+
+> Можно ли было изначально исключить "ручное" разбиение при проектировании таблицы orders?  
+
+Вопрос неоднозначный. Запретить? Если нет, то ответ находится в предыдущем решении - 
+если разбить на партиции при проектировании, то не придётся вручную разбивать. 
+
+## Задача №4
+
+```bash
+cd /home; pg_dump -U postgres -W test_database > test_database_dump.sql
+```
+
+> Как бы вы доработали бэкап-файл, чтобы добавить уникальность значения столбца title для таблиц test_database?
+
+Я бы не стал править бэкап-файл - пусть этим занимаются DBA инженеры.  
+По условию задачи база данных активна. Повесить UNIQUE для столбца title через констрейны postgres 8 не позволяет. mysql тоже. 
+Происходил конфликт с разбиением на партиции. Вероятно решить эту задачу таким способом можно в коммерческих версиях продуктов. 
+Для решения задачи я использовал SQL - вынес поле titles в отдельную таблицу, создал primary key, сделал уникальным поле title.
+Затем создал новую таблицу с foreign key и range. Затем создал партиции для дешёвых и дорогих товаров.
+В итоге заполнил новую таблицу данными из оригинальной, заменив текстовое поле на индекс.
+
+```sql
+begin transaction;                                                                  	
+DROP TABLE IF EXISTS titles;
+create table titles as 
+  select id, title from orders;
+alter table titles 
+  rename id to title_key;
+alter table titles 
+  add primary key (title_key);
+alter table titles 
+  add constraint title_key UNIQUE (title);
+create table "fixed_orders" (
+  id integer,
+  title_key int,
+  price integer,
+    CONSTRAINT fk_customer
+      FOREIGN KEY(title_key)
+      REFERENCES my(id)
+) PARTITION BY RANGE(price);
+CREATE TABLE cheap_orders PARTITION OF "fixed_orders" for values from(0) to (500);
+CREATE TABLE gross_orders PARTITION OF "fixed_orders" for values from (500) to (100000);
+insert into "fixed_orders" 
+  select o.id, t.title_key, o.price 
+    from orders o 
+    inner join titles t on t.title = o.title
+  ;
+commit;
+```
+
+Проверка трансформации.
+
+```sql
+explain select id, t.title, price from fixed_orders as o 
+  join titles as t on o.title_key = t.title_key;
+```
+
+<pre>
+test_database=# explain select  o.id, t.title, price from fixed_orders as o
+  join my as t on o.title_key = t.id;
+                                     QUERY PLAN
+-------------------------------------------------------------------------------------
+ Hash Join  (cost=1.18..93.31 rows=163 width=186)
+   Hash Cond: (o.title_key = t.id)
+   ->  Append  (cost=0.00..81.20 rows=4080 width=12)
+         ->  Seq Scan on fix_cheap_orders o_1  (cost=0.00..30.40 rows=2040 width=12)
+         ->  Seq Scan on fix_gross_orders o_2  (cost=0.00..30.40 rows=2040 width=12)
+   ->  Hash  (cost=1.08..1.08 rows=8 width=182)
+         ->  Seq Scan on my t  (cost=0.00..1.08 rows=8 width=182)
+(7 rows)
+
+test_database=# select f.id, m.title, f.price from fixed_orders as f join titles as m on f.title_key = m.title_key;
+ id |        title         | price
+----+----------------------+-------
+  1 | War and peace        |   100
+  3 | Adventure psql time  |   300
+  4 | Server gravity falls |   300
+  5 | Log gossips          |   123
+  7 | Me and my bash-pet   |   499
+  2 | My little database   |   500
+  6 | WAL never lies       |   900
+  8 | Dbiezdmin            |   501
+(8 rows)
+
+test_database=# select f.id, m.title, f.price from fix_cheap_orders as f join titles as m on f.title_key = m.title_key;
+ id |        title         | price
+----+----------------------+-------
+  1 | War and peace        |   100
+  3 | Adventure psql time  |   300
+  4 | Server gravity falls |   300
+  5 | Log gossips          |   123
+  7 | Me and my bash-pet   |   499
+(5 rows)
+
+test_database=# select f.id, m.title, f.price from fix_gross_orders as f join titles as m on f.title_key = m.title_key;
+ id |       title        | price
+----+--------------------+-------
+  2 | My little database |   500
+  6 | WAL never lies     |   900
+  8 | Dbiezdmin          |   501
+(3 rows)
+
+test_database=#
+</pre>
+
+
+
+<!--
+Это пробоба от 15 июнь (06) 2021.
+
+INSERT INTO table_output
+SELECT f.*
+FROM   "orders" t, my_func(t.id) f;
+
+create table "titles"  as select ("id","title") from "orders";;
+insert into "titles" ("id", "title") select ("id","title") from "orders";
+create table "fix_orders" (id primary key, "title_ref" REFERENCE titiles (id), price integer ) as select ("id", "title", "price") from "orders" 
+
+CREATE TABLE t1 (
+    col1 INT UNIQUE NOT NULL,
+    col2 DATE NOT NULL,
+    col3 INT NOT NULL,
+    col4 INT PIMARY KEY
+)
+PARTITION BY RANGE(col4);
+
+CREATE TABLE tot (id int primary key, title varchar(80) unique, price integer)  partition by range(price);
+
+create table titles (id int primary key, title varchar(80) unique not null);
+CREATE TABLE test_orders (id int, title varchar(80), price integer)  partition by range(price);
+
+CREATE TABLE test_orders (
+    order_id integer PRIMARY KEY,
+    product_no integer REFERENCES products (product_no),
+    price integer
+) partition by range(price);
+
+
+alter table orders add primary key(id, title, price);
+alter table orders add unique key(title);
+
+create table "fix_orders" (id primary key, "title_ref" REFERENCE titiles (id), price integer );
+ as select ("id", "title", "price") from "orders" 
+-->
+
+
+
