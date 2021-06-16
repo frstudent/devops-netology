@@ -282,6 +282,11 @@ test_database=# select f.id, m.title, f.price from fix_gross_orders as f join ti
 test_database=#
 </pre>
 
+Далее можно удалить старые таблицы и сделать заново дамп.
+
+```bash
+cd /home; pg_dump -U postgres -W test_database > fixed_database_dump.sql
+```
 
 
 <!--
