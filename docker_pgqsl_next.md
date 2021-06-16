@@ -217,7 +217,7 @@ create table "fixed_orders" (
   price integer,
     CONSTRAINT fk_customer
       FOREIGN KEY(title_key)
-      REFERENCES my(id)
+      REFERENCES titles(title_key)
 ) PARTITION BY RANGE(price);
 CREATE TABLE cheap_orders PARTITION OF "fixed_orders" for values from(0) to (500);
 CREATE TABLE gross_orders PARTITION OF "fixed_orders" for values from (500) to (100000);
@@ -237,8 +237,6 @@ explain select id, t.title, price from fixed_orders as o
 ```
 
 <pre>
-test_database=# explain select  o.id, t.title, price from fixed_orders as o
-  join my as t on o.title_key = t.id;
                                      QUERY PLAN
 -------------------------------------------------------------------------------------
  Hash Join  (cost=1.18..93.31 rows=163 width=186)
