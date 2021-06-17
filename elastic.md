@@ -241,3 +241,56 @@ curl -X DELETE "192.168.1.194:9200/ind-1"
 
 ##  Задача 3
 
+Регистрация снапшота
+
+```bash
+curl -X PUT "192.168.1.194:9200/_snapshot/my_repository?pretty" -H 'Content-Type: application/json' -d'
+{
+  "type": "fs",
+  "settings": {
+    "location": "netology_backup"
+  }
+}
+'
+```
+<pre>
+{
+  "acknowledged" : true
+}
+</pre>
+
+Создание снапшота
+
+```bash
+curl -X PUT "192.168.1.194:9200/_snapshot/my_repository/snapshot_1?wait_for_completion=true&pretty"
+s```
+
+<pre>
+root@frcloud4:~/elastic# sh snapshot
+{
+  "snapshot" : {
+    "snapshot" : "snapshot_1",
+    "uuid" : "L6zvavoZStupjYCe7LkWjA",
+    "version_id" : 7130299,
+    "version" : "7.13.2",
+    "indices" : [
+      "ind-1"
+    ],
+    "data_streams" : [ ],
+    "include_global_state" : true,
+    "state" : "SUCCESS",
+    "start_time" : "2021-06-17T14:55:31.771Z",
+    "start_time_in_millis" : 1623941731771,
+    "end_time" : "2021-06-17T14:55:33.172Z",
+    "end_time_in_millis" : 1623941733172,
+    "duration_in_millis" : 1401,
+    "failures" : [ ],
+    "shards" : {
+      "total" : 1,
+      "failed" : 0,
+      "successful" : 1
+    },
+    "feature_states" : [ ]
+  }
+}
+</pre>
