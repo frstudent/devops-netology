@@ -1,6 +1,64 @@
 ﻿# Elastic
 
+## Задача 0  
+
+Подговтока к выпылонению заданий - настройка elasticsearch
+```bash
+grep -v '^#' elasticsearch.yml
+```
+<pre>
+cluster.name: netology
+node.name: netology_test-1
+
+path.data: /var/lib/elastic
+path.repo: /var/lib/elastic/shapshots
+network.host: 192.168.1.194
+http.port: 9200
+
+cluster.initial_master_nodes: ["netology_test-1"]
+</pre>
+
+```bash
+grep -v '^#' jvm.options
+```
+<pre>
+-Xms2g
+-Xmx2g
+
+8-13:-XX:+UseConcMarkSweepGC
+8-13:-XX:CMSInitiatingOccupancyFraction=75
+8-13:-XX:+UseCMSInitiatingOccupancyOnly
+
+14-:-XX:+UseG1GC
+
+-Djava.io.tmpdir=${ES_TMPDIR}
+
+-XX:+HeapDumpOnOutOfMemoryError
+
+-XX:HeapDumpPath=data
+
+-XX:ErrorFile=logs/hs_err_pid%p.log
+
+8:-XX:+PrintGCDetails
+8:-XX:+PrintGCDateStamps
+8:-XX:+PrintTenuringDistribution
+8:-XX:+PrintGCApplicationStoppedTime
+8:-Xloggc:logs/gc.log
+8:-XX:+UseGCLogFileRotation
+8:-XX:NumberOfGCLogFiles=32
+8:-XX:GCLogFileSize=64m
+
+9-:-Xlog:gc*,gc+age=trace,safepoint:file=logs/gc.log:utctime,pid,tags:filecount=32,filesize=64m
+</pre>
+
+
+
 ## Задача 1
+
+Размещение сервиса в контейнере гораздо проще, если вы знакомы с сервисом. 
+Поэтому перед помещением сервиса в контейнео предлагаю развернуть, настроить и выполнить выполнить локально. Состояние 
+
+
 
 Подготовка docker.compose
 
@@ -9,15 +67,27 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
+Содержимое файла Dockerfile
+
 <pre>
+FROM centos:7
+ENV container docker
+
 RUN sysctl -w vm.max_map_count=262144
 RUN sysctl -p
+
+# Install
+RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.13.2-linux-x86_64.tar.gz
+RUN tar xzf elasticsearch-7.13.2-linux-x86_64.tar.gzelasticsearch-7.13.2-linux-x86_64.tar.gz
+
 
 EXPOSE 9200
 </pre>
 
 
 ## Задача 2
+
+
 
 <pre>
 devops@frcloud4:~/elasticsearch-7.13.2/config$ curl -X GET "192.168.1.194:9200/?pretty"
@@ -55,7 +125,7 @@ curl -X PUT "192.168.1.194:9200/ind-1?pretty" -H 'Contt-Type: application/json' 
 '
 ```
 
-Резульат выполнения команды:
+Результат выполнения команды:
 
 <pre>
 {
@@ -80,12 +150,15 @@ yellow open ind-2 exxqw0veS3mSZLe55p0QeA 2 1 0 0 416b 416b
 
 > Как вы думаете, почему часть индексов и кластер находится в состоянии yellow?
 
-Потому что elasticsearch не наншёл других нод. Чтобы перейти в состоянии greee, потребуется поднять и elasticsearch на соответствующих нодах в кластере. 
+Потому что elasticsearch не нашёл других нод. Чтобы перейти в состоянии greee, потребуется поднять и elasticsearch на соответствующих нодах в кластере. 
+
+```bash
+curl -X GET "192.168.1.194:9200/_cat/shards"
+```
+
+Вывод команды
 
 <pre>
-curl -X GET "192.168.1.194:9200/_cat/indices"
-yellow open my-index-000001 jw5UEVySQcm4djCbn9T0jw 1 1 0 0 208b 208b
-curl -X GET "192.168.1.194:9200/_cat/shards?pretty"
 my-index-000001 0 p STARTED    0 208b 192.168.1.194 netology_test-1
 my-index-000001 0 r UNASSIGNED
 </pre>
@@ -97,6 +170,7 @@ curl -X GET "192.168.1.194:9200/ind-1?pretty"
 ```
 
 Ответ сервера
+
 <pre>
 {
   "ind-1" : {
@@ -126,6 +200,7 @@ curl -X GET "192.168.1.194:9200/ind-1?pretty"
 </pre>
 
 Аналогично для ind-2
+
 <pre>
 {
   "ind-2" : {
