@@ -263,7 +263,7 @@ curl -X PUT "192.168.1.194:9200/_snapshot/my_repository?pretty" -H 'Content-Type
 
 ```bash
 curl -X PUT "192.168.1.194:9200/_snapshot/my_repository/snapshot_1?wait_for_completion=true&pretty"
-s```
+```
 
 <pre>
 root@frcloud4:~/elastic# sh snapshot
