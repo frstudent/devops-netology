@@ -111,7 +111,7 @@ curl -X GET "192.168.1.194:9200/?pretty"
 }
 </pre>
 
-Для создания индексов используется следущая команда:
+### Создание индексов:
 
 ```bash
 curl -X PUT "192.168.1.194:9200/ind-1?pretty" -H 'Contt-Type: application/json' -d'
@@ -155,6 +155,7 @@ yellow open ind-2 exxqw0veS3mSZLe55p0QeA 2 1 0 0 416b 416b
 
 Потому что elasticsearch не нашёл других нод. Чтобы перейти в состоянии greee, потребуется поднять и elasticsearch на соответствующих нодах в кластере. 
 
+### Получение списка шардов
 ```bash
 curl -X GET "192.168.1.194:9200/_cat/shards"
 ```
@@ -166,7 +167,7 @@ my-index-000001 0 p STARTED    0 208b 192.168.1.194 netology_test-1
 my-index-000001 0 r UNASSIGNED
 </pre>
 
-Проверка индекса и его состояние
+### Проверка индекса
 
 ```bash
 curl -X GET "192.168.1.194:9200/ind-1?pretty"
@@ -232,7 +233,8 @@ curl -X GET "192.168.1.194:9200/ind-1?pretty"
 }
 </pre>
 
-Удаление индексов.
+### Удаление индексов.
+
 ```bash
 curl -X DELETE "192.168.1.194:9200/ind-3?pretty"
 curl -X DELETE "192.168.1.194:9200/ind-2"
