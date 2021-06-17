@@ -294,3 +294,17 @@ root@frcloud4:~/elastic# sh snapshot
   }
 }
 </pre>
+
+> Приведите в ответе список файлов в директории со snapshotами.
+
+<pre>
+/var/lib/elastic/shapshots/netology_backup# ls -la `pwd`
+total 52
+drwxr-xr-x 3 devops devops  4096 Jun 17 10:55 .
+drwxr-xr-x 4 devops devops  4096 Jun 17 10:48 ..
+-rw-r--r-- 1 devops devops   506 Jun 17 10:55 index-0
+-rw-r--r-- 1 devops devops     8 Jun 17 10:55 index.latest
+drwxr-xr-x 3 devops devops  4096 Jun 17 10:55 indices
+-rw-r--r-- 1 devops devops 25734 Jun 17 10:55 meta-L6zvavoZStupjYCe7LkWjA.dat
+-rw-r--r-- 1 devops devops   363 Jun 17 10:55 snap-L6zvavoZStupjYCe7LkWjA.dat
+</pre>
