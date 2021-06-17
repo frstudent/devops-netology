@@ -87,10 +87,11 @@ EXPOSE 9200
 
 ## Задача 2
 
-
+```bash
+curl -X GET "192.168.1.194:9200/?pretty"
+```
 
 <pre>
-devops@frcloud4:~/elasticsearch-7.13.2/config$ curl -X GET "192.168.1.194:9200/?pretty"
 {
   "name" : "netology_test-1",
   "cluster_name" : "netology",
@@ -138,6 +139,8 @@ curl -X PUT "192.168.1.194:9200/ind-1?pretty" -H 'Contt-Type: application/json' 
 Аналогично выполняется для ind-1 и ind-2  
 Затем проверка созданных индексов
 
+
+### Получение списка индексов
 ```bash
 curl -X GET "http://192.168.1.194:9200/_cat/indices"
 ```
@@ -241,8 +244,9 @@ curl -X DELETE "192.168.1.194:9200/ind-1"
 
 ##  Задача 3
 
-Регистрация снапшота
+> Приведите в ответе запрос API и результат вызова API для создания репозитория.
 
+Запрос
 ```bash
 curl -X PUT "192.168.1.194:9200/_snapshot/my_repository?pretty" -H 'Content-Type: application/json' -d'
 {
@@ -253,10 +257,17 @@ curl -X PUT "192.168.1.194:9200/_snapshot/my_repository?pretty" -H 'Content-Type
 }
 '
 ```
+Ответ
 <pre>
 {
   "acknowledged" : true
 }
+</pre>
+
+> Создайте индекс test с 0 реплик и 1 шардом и приведите в ответе список индексов.
+
+<pre>
+green open test ZwYhYFwORWyhuLICvWD8WA 1 0 0 0 208b 208b
 </pre>
 
 Создание снапшота
@@ -266,7 +277,6 @@ curl -X PUT "192.168.1.194:9200/_snapshot/my_repository/snapshot_1?wait_for_comp
 ```
 
 <pre>
-root@frcloud4:~/elastic# sh snapshot
 {
   "snapshot" : {
     "snapshot" : "snapshot_1",
@@ -299,12 +309,32 @@ root@frcloud4:~/elastic# sh snapshot
 
 <pre>
 /var/lib/elastic/shapshots/netology_backup# ls -la `pwd`
-total 52
-drwxr-xr-x 3 devops devops  4096 Jun 17 10:55 .
-drwxr-xr-x 4 devops devops  4096 Jun 17 10:48 ..
--rw-r--r-- 1 devops devops   506 Jun 17 10:55 index-0
--rw-r--r-- 1 devops devops     8 Jun 17 10:55 index.latest
-drwxr-xr-x 3 devops devops  4096 Jun 17 10:55 indices
+total 84
+drwxr-xr-x 3 devops devops  4096 Jun 17 11:49 .
+drwxr-xr-x 3 devops devops  4096 Jun 17 11:37 ..
+-rw-r--r-- 1 devops devops   860 Jun 17 11:42 index-1
+-rw-r--r-- 1 devops devops     8 Jun 17 11:42 index.latest
+drwxr-xr-x 4 devops devops  4096 Jun 17 11:42 indices
 -rw-r--r-- 1 devops devops 25734 Jun 17 10:55 meta-L6zvavoZStupjYCe7LkWjA.dat
+-rw-r--r-- 1 devops devops 25734 Jun 17 11:42 meta-tETryKpESXuAhKAokPTCQA.dat
 -rw-r--r-- 1 devops devops   363 Jun 17 10:55 snap-L6zvavoZStupjYCe7LkWjA.dat
+-rw-r--r-- 1 devops devops   360 Jun 17 11:42 snap-tETryKpESXuAhKAokPTCQA.dat
+r</pre>
+
+> Удалите индекс test и создайте индекс test-2. Приведите в ответе список индексов.
+
+<pre>
+green open test-2 yQxXbBpUSOWNPs-YgvYk7w 1 0 0 0 208b 208b
 </pre>
+
+> Приведите в ответе запрос к API восстановления и итоговый список индексов.
+
+### Запрос API восстановления
+curl -X POST "192.168.1.194:9200/_snapshot/my_repository/snapshot_2/_restore?pretty"
+
+### Список индексов
+<pre>
+green open test-2 yQxXbBpUSOWNPs-YgvYk7w 1 0 0 0 208b 208b
+green open test   CXNIgVuHTAecxXMunmTi0g 1 0 0 0 208b 208b
+</pre>
+
