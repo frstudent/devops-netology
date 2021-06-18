@@ -108,11 +108,6 @@ USER netology
 CMD ["//elasticsearch-7.13.2/bin//elasticsearch"]
 
 
-
-
-
-
-
 </pre>
 
 Генерация контейнера
@@ -126,11 +121,13 @@ docker build . -t cent  | tee docker.log
 
 ```bash
 docker run --name netology \
+  --hostname netology_test \
+  --privileged=true \
     -p9200:9200 \
     -v /home/devops/netology/elastic/docker/data:/var/lib/elastic \
-    -v /home/devops/netology/elastic/docker/config:/
-    -e MYTESTVAR=sometexthere
-  -it cent
+    -v /home/devops/netology/elastic/docker/config:/elasticsearch-7.13.2/config:ro \
+    -e MYTESTVAR=sometexthere \
+  -it cent \
     bash
 ```
 
@@ -297,7 +294,7 @@ curl -X DELETE "192.168.1.194:9200/ind-1"
 
 > Приведите в ответе запрос API и результат вызова API для создания репозитория.
 
-Запрос
+Запрос на создание репозитория
 ```bash
 curl -X PUT "192.168.1.194:9200/_snapshot/my_repository?pretty" -H 'Content-Type: application/json' -d'
 {
@@ -382,6 +379,11 @@ green open test-2 yQxXbBpUSOWNPs-YgvYk7w 1 0 0 0 208b 208b
 
 ### Запрос API восстановления
 curl -X POST "192.168.1.194:9200/_snapshot/my_repository/snapshot_2/_restore?pretty"
+
+Замему, что эту операция пришлось делат два раза, первый раз на хосте, ещё до разворачивания в контейнере, второй раз в контейнере.
+В первом случае замена прошла без проблем, индексы совпали. Во втором случае пришлось править снапшот.
+Делал вот по этой инструкции - https://kifarunix.com/restore-elasticsearch-snapshot-to-another-cluster/
+Помогло.
 
 ### Список индексов
 <pre>
