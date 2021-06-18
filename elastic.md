@@ -1,8 +1,10 @@
 ﻿# Elastic
 
 ## Задача 0  
+Размещение сервиса в контейнере гораздо проще, если вы знакомы с сервисом. 
+Поэтому перед помещением сервиса в контейнер разворачиваю, настраиваю, изучаю и тестировую вне контейнера. 
 
-Подговтока к выпылонению заданий - настройка elasticsearch
+Подговтока к выполнению заданий - настройка elasticsearch. Этой конфигурации оказалось достаточно чтобы выполнить задания 2 и 3.
 ```bash
 grep -v '^#' elasticsearch.yml
 ```
@@ -55,17 +57,24 @@ grep -v '^#' jvm.options
 
 ## Задача 1
 
-Размещение сервиса в контейнере гораздо проще, если вы знакомы с сервисом. 
-Поэтому перед помещением сервиса в контейнео предлагаю развернуть, настроить и выполнить выполнить локально. Состояние 
+Размещение elasticksearch в Docker контейнере.  
+Я долго пытался запустить elasticksearch по всем правилам как сервис systemd и потерял много времени на выяснение проблемы,
+оказалось что при запуске в виде сервиса эластик потребляет слишком много ресурсов и не может стартовать. Возможно данное поведение
+как то можно было подправить конфигурацией systemd, но я решил отказаться от использования сервисов в этом задании.
 
+При размещении контейнера в кластере хорошей практикой является размещение директорий с конфигурацией и данными на отдельных томах.
+Такой подход имеет несколько преимуещств - при сбое в контейнере данные не потеряются, контейнер легко переносим, и другие преимущества.
 
-
+<!--
 Подготовка docker.compose
 
 ```bash
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ```
+Отличное руководство по установвке в контейнер
+https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
+-->
 
 Содержимое файла Dockerfile
 
@@ -73,17 +82,57 @@ sudo chmod +x /usr/local/bin/docker-compose
 FROM centos:7
 ENV container docker
 
-RUN sysctl -w vm.max_map_count=262144
-RUN sysctl -p
+# Prerequests
+#RUN echo 'root:123' | chpasswd
+RUN adduser -r netology
+
 
 # Install
-RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.13.2-linux-x86_64.tar.gz
-RUN tar xzf elasticsearch-7.13.2-linux-x86_64.tar.gzelasticsearch-7.13.2-linux-x86_64.tar.gz
-
+RUN curl https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.13.2-linux-x86_64.tar.gz -o elastic.tar.gz
+RUN tar xkvzf elastic.tar.gz
+RUN chown -R netology /elasticsearch-7.13.2
+RUN rm elastic.tar.gz
 
 EXPOSE 9200
+
+CMD sysctl -w vm.max_map_count=262144
+CMD sysctl -p
+
+# 
+#COPY elasticsearch.service /etc/systemd/system
+#RUN systemctl status elasticsearch
+
+VOLUME [ "/sys/fs/cgroup" ]
+#CMD ["/usr/sbin/init"]
+USER netology
+CMD ["//elasticsearch-7.13.2/bin//elasticsearch"]
+
+
+
+
+
+
+
 </pre>
 
+Генерация контейнера
+
+```bash
+docker build . -t cent  | tee docker.log
+#docker image rm $(docker image ls -f 'dangling=true' -q) --force
+```
+
+Старт контейнера
+
+```bash
+docker run --name netology \
+    -p9200:9200 \
+    -v /home/devops/netology/elastic/docker/data:/var/lib/elastic \
+    -v /home/devops/netology/elastic/docker/config:/
+    -e MYTESTVAR=sometexthere
+  -it cent
+    bash
+```
 
 ## Задача 2
 
