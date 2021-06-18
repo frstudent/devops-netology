@@ -77,7 +77,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
 -->
 
-Содержимое файла Dockerfile  
+### Содержимое файла Dockerfile  
 Иногда нужно что-то подправить в контейнере. Например, при переносе репозитория между кластерами. В этом случае раскомментируйте смену пароля root. 
 Для обычного функционирования пароль root не требуется.
 
