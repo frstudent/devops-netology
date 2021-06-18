@@ -5,6 +5,7 @@
 Поэтому перед помещением сервиса в контейнер разворачиваю, настраиваю, изучаю и тестировую вне контейнера. 
 
 Подговтока к выполнению заданий - настройка elasticsearch. Этой конфигурации оказалось достаточно чтобы выполнить задания 2 и 3.
+Так выглядит конфигурация elasticsearch:
 ```bash
 grep -v '^#' elasticsearch.yml
 ```
@@ -20,6 +21,8 @@ http.port: 9200
 
 cluster.initial_master_nodes: ["netology_test-1"]
 </pre>
+
+Конфигурация виртуальной машины Java:
 
 ```bash
 grep -v '^#' jvm.options
@@ -59,12 +62,9 @@ grep -v '^#' jvm.options
 ## Задача 1
 
 Размещение elasticksearch в Docker контейнере.  
-Я долго пытался запустить elasticksearch по всем правилам как сервис systemd и потерял много времени на выяснение проблемы,
-оказалось что при запуске в виде сервиса эластик потребляет слишком много ресурсов и не может стартовать. Возможно данное поведение
+Я долго пытался запустить elasticksearch по всем правилам как сервис systemd и потерял много времени на выяснение проблемы.
+Оказалось что при запуске в виде сервиса эластик потребляет слишком много ресурсов и не может стартовать. Возможно данное поведение
 как то можно было подправить конфигурацией systemd, но я решил отказаться от использования сервисов в этом задании.
-
-При размещении контейнера в кластере хорошей практикой является размещение директорий с конфигурацией и данными на отдельных томах.
-Такой подход имеет несколько преимуещств - при сбое в контейнере данные не потеряются, контейнер легко переносим, и другие преимущества.
 
 <!--
 Подготовка docker.compose
@@ -77,7 +77,9 @@ sudo chmod +x /usr/local/bin/docker-compose
 https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
 -->
 
-Содержимое файла Dockerfile
+Содержимое файла Dockerfile  
+Иногда нужно что-то подправить в контейнере. Например, при переносе репозитория между кластерами. В этом случае раскомментируйте смену пароля root. 
+Для обычного функционирования пароль root не требуется.
 
 <pre>
 FROM centos:7
@@ -107,20 +109,21 @@ VOLUME [ "/sys/fs/cgroup" ]
 #CMD ["/usr/sbin/init"]
 USER netology
 CMD ["/elasticsearch-7.13.2/bin/elasticsearch"]
-
-
 </pre>
 
-Генерация контейнера
+### Генерация контейнера
 
 ```bash
 docker build . -t cent  | tee docker.log
 #docker image rm $(docker image ls -f 'dangling=true' -q) --force
 ```
 
-Старт контейнера
+### Старт контейнера
 
-```bash
+При размещении контейнера в кластере хорошей практикой является размещение директорий с конфигурацией и данными на отдельных томах.
+Такой подход имеет несколько преимуещств - при сбое в контейнере данные не потеряются, контейнер легко переносим, и другие преимущества.
+
+<!--
 docker run --name netology \
   --hostname netology_test \
   --privileged=true \
@@ -130,9 +133,22 @@ docker run --name netology \
     -e MYTESTVAR=sometexthere \
   -it cent \
     bash
+-->
+
+```bash
+
+docker run --name netology \
+  --hostname netology_test-1 \
+    -p9200:9200 \
+    -v /home/devops/netology/elastic/docker/data:/var/lib/elastic \
+    -v /home/devops/netology/elastic/docker/config:/elasticsearch-7.13.2/config:ro \
+    -e MYTESTVAR=sometexthere \
+  -d cent
 ```
 
 ## Задача 2
+
+Первым делом убеждаемся что elasticsearch удачно стартовал.
 
 ```bash
 curl -X GET "192.168.1.194:9200/?pretty"
