@@ -13,8 +13,9 @@ cluster.name: netology
 node.name: netology_test-1
 
 path.data: /var/lib/elastic
-path.repo: /var/lib/elastic/shapshots
-network.host: 192.168.1.194
+path.repo: /var/lib/elastic/snapshots
+
+network.host: netology_test-1
 http.port: 9200
 
 cluster.initial_master_nodes: ["netology_test-1"]
@@ -105,7 +106,7 @@ CMD sysctl -p
 VOLUME [ "/sys/fs/cgroup" ]
 #CMD ["/usr/sbin/init"]
 USER netology
-CMD ["//elasticsearch-7.13.2/bin//elasticsearch"]
+CMD ["/elasticsearch-7.13.2/bin/elasticsearch"]
 
 
 </pre>
@@ -378,9 +379,10 @@ green open test-2 yQxXbBpUSOWNPs-YgvYk7w 1 0 0 0 208b 208b
 > Приведите в ответе запрос к API восстановления и итоговый список индексов.
 
 ### Запрос API восстановления
+```bash
 curl -X POST "192.168.1.194:9200/_snapshot/my_repository/snapshot_2/_restore?pretty"
-
-Замему, что эту операция пришлось делат два раза, первый раз на хосте, ещё до разворачивания в контейнере, второй раз в контейнере.
+```
+Замечу, что эту операция пришлось делат два раза, первый раз на хосте, ещё до разворачивания в контейнере, второй раз в контейнере.
 В первом случае замена прошла без проблем, индексы совпали. Во втором случае пришлось править снапшот.
 Делал вот по этой инструкции - https://kifarunix.com/restore-elasticsearch-snapshot-to-another-cluster/
 Помогло.
