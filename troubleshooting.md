@@ -16,15 +16,30 @@
 
 ## Задача 2
 >При масштабировании сервиса до N реплик вы увидели, что:
-
 >сначала рост отношения записанных значений к истекшим
 >Redis блокирует операции записи
-
 >Как вы думаете, в чем может быть проблема?
 
+По ссылке, [приведённой в задании](https://redis.io/topics/latency), дана исчерпавающая информация на этот вопрос. 
+И приведены пути решения.  
+Замечу лишь что рекомендация отключения свойства ядра /sys/kernel/mm/transparent_hugepage дана в руководствах
+по установке Kubernetes. Теперь я понимаю почему.
+
+Помимо "больших страниц" небходимо проверить https://redis.io/commands/slowlog и оптимизировать запросы.  
+
+Озаботиться современным hardware: _"...make sure you use HVM based modern EC2 instances, like m3.medium. Otherwise fork() is too slow."_.
+
+Проверить параметра ядра /proc/sys/vm/overcommit_memory
+```bash
+echo 1 > /proc/sys/vm/overcommit_memory
+```
+
+Измерить латентность и на основе полученных данных проанализировать причины задержек.
+```bash
+/proc/sys/vm/overcommit_memory
+```
 
 ## Задача 3
-
 ### InterfaceError: (InterfaceError) 2013: Lost connection to MySQL server during query u'SELECT..... '
 >Как вы думаете, почему это начало происходить и как локализовать проблему?
 
@@ -37,8 +52,10 @@ https://stackoverflow.com/questions/29755228/sqlalchemy-mysql-lost-connection-to
 
 1. Анализ log-файла MySQL на предмет поиска причины обрыва.
 2. Проверка конфигурации MySQL. Возможно разрыв инициирован MySQL сервером по причине таймаута.
-<pre>
+```sql
 mysql> show variables like '%time%';
+```
+<pre>
 +-----------------------------------+-------------------+
 | Variable_name                     | Value             |
 +-----------------------------------+-------------------+
@@ -87,9 +104,7 @@ mysql> show variables like '%time%';
 5. Увеличить размер оперативной памяти узлу с MySQL. Например, перейдя на другой тарифный план облачного провайдера.  
 
 ## Задача 4
-
 ### postmaster invoked oom-killer
-
 >Как вы думаете, что происходит?
 
 Сервер MySQL запросил у ядра операционной системы объём памяти сверху установленного лимита. В следствии этого процесс был 
@@ -97,21 +112,28 @@ mysql> show variables like '%time%';
  
 >Как бы вы решили данную проблему?
 
-Предлагаю пять решения в порядке уменьшения приоритета.
+Предлагаю нескольско способов в порядке уменьшения приоритета.
 
-1. Увеличить объём ОЗУ у ноды.  
-2. Уменьшить максимальное значение размера shared_buffers.  
+1. __Увеличить__ объём ОЗУ у ноды.  
+2. __Уменьшить__ максимальное значение размера shared_buffers.  
+
+```sql
+postgres=# select name, setting from pg_settings where name like '%buffer%';
+```
 
 <pre>
-postgres=# select name, setting from pg_settings where name like '%buffer%';
       name      | setting
 ----------------+---------
  shared_buffers | 16384
  temp_buffers   | 1024
  wal_buffers    | 512
 (3 rows)
+</pre>
 
+```sql
 postgres=# select name, setting from pg_settings where name like '%connections%';
+```
+<pre>
               name              | setting
 --------------------------------+---------
  log_connections                | off
@@ -122,7 +144,7 @@ postgres=# select name, setting from pg_settings where name like '%connections%'
 </pre>
 
 3. Предложить пользователям оптмизированный вариант запросов, потребляющий меньше памяти.  
-4. Изменить OOM-scrore процесса.
+4. Изменить OOM-score процесса.
 
 Например, в моём docker-контейнере процесс postgres всегда имеет PID=1, т.е. подменяет собой init  
 Можно вручную назначить
@@ -130,9 +152,11 @@ postgres=# select name, setting from pg_settings where name like '%connections%'
 echo -500 > /proc/1/oom_score_adj
 ```
 
+<!--
 5. Отключить OOM-killer  
 
 ```bash
 sysctl -w vm.oom-kill = 0
 ```
+-->
 
