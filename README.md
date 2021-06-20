@@ -1,6 +1,6 @@
 # devops-netology
 Курс DevOps на https://netology.ru/  
----
+
 Здесь будут покоиться некоторые домашние задания студента Нетологии из компании [Fast Reports](https://www.fast-report.com)
 
 [6.1. Типы и структура СУБД](db_basics.md)  
