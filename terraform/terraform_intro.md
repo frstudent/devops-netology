@@ -48,7 +48,7 @@ is 1.0.0. You can update by downloading from https://www.terraform.io/downloads.
 
 ## Задача 3
 
-Уставновка чуть более свежей версии - 0.13.5
+Установка чуть более свежей версии - 0.13.5
 
 ```bash
  wget https://releases.hashicorp.com/terraform/0.13.5/terraform_0.13.5_linux_amd64.zip
