@@ -28,11 +28,10 @@
 ### InterfaceError: (InterfaceError) 2013: Lost connection to MySQL server during query u'SELECT..... '
 >Как вы думаете, почему это начало происходить и как локализовать проблему?
 
-С наибольшей долей вероятности проблема аналогична одной из трёх.
+С наибольшей долей вероятности проблема аналогична одной из трёх:.  
 https://stackoverflow.com/questions/29488583/is-there-a-mysql-connection-time-limit/29490286  
 https://stackoverflow.com/questions/415905/how-to-set-a-maximum-execution-time-for-a-mysql-query  
 https://stackoverflow.com/questions/29755228/sqlalchemy-mysql-lost-connection-to-mysql-server-during-query  
-Причина обрыва соединения возможно описана 
 
 >Какие пути решения данной проблемы вы можете предложить?
 
@@ -80,44 +79,12 @@ mysql> show variables like '%time%';
 | wait_timeout                      | 28800             |
 +-----------------------------------+-------------------+
 35 rows in set (0.00 sec)
-
-mysql> show variables like '%buffer%';
-+-------------------------------------+----------------+
-| Variable_name                       | Value          |
-+-------------------------------------+----------------+
-| bulk_insert_buffer_size             | 8388608        |
-| innodb_buffer_pool_chunk_size       | 134217728      |
-| innodb_buffer_pool_dump_at_shutdown | ON             |
-| innodb_buffer_pool_dump_now         | OFF            |
-| innodb_buffer_pool_dump_pct         | 25             |
-| innodb_buffer_pool_filename         | ib_buffer_pool |
-| innodb_buffer_pool_in_core_file     | ON             |
-| innodb_buffer_pool_instances        | 1              |
-| innodb_buffer_pool_load_abort       | OFF            |
-| innodb_buffer_pool_load_at_startup  | ON             |
-| innodb_buffer_pool_load_now         | OFF            |
-| innodb_buffer_pool_size             | 134217728      |
-| innodb_change_buffer_max_size       | 25             |
-| innodb_change_buffering             | all            |
-| innodb_log_buffer_size              | 104857600      |
-| innodb_sort_buffer_size             | 1048576        |
-| join_buffer_size                    | 262144         |
-| key_buffer_size                     | 16777216       |
-| myisam_sort_buffer_size             | 8388608        |
-| net_buffer_length                   | 16384          |
-| preload_buffer_size                 | 32768          |
-| read_buffer_size                    | 131072         |
-| read_rnd_buffer_size                | 262144         |
-| select_into_buffer_size             | 131072         |
-| sort_buffer_size                    | 262144         |
-| sql_buffer_result                   | OFF            |
-+-------------------------------------+----------------+
-26 rows in set (0.00 sec)
 </pre>
+Вероятно что некоторые значения были исправилены администратором в сторону уменьшения. Возможно некоторые из них можно слегка увеличить  
 
-3. Попросить пользователя пример запроса и провести анализ запроса на основе [вот этой статьи](https://mysqlserverteam.com/mysql-explain-analyze/) и прислать вывод.
-4. Если MySql работает в конейнере, проверить нет ли лимитов в конфигурации контейнера. 
-5. Увеличить размер оперативной памяти узлу с MySQL. Например, перейдя на другой тарифный план облачного провайдера.
+3. Попросить пользователя пример запроса и провести анализ запроса на основе [вот этой статьи](https://mysqlserverteam.com/mysql-explain-analyze/) и прислать вывод.  
+4. Если MySql работает в конейнере, проверить нет ли лимитов в конфигурации контейнера.  
+5. Увеличить размер оперативной памяти узлу с MySQL. Например, перейдя на другой тарифный план облачного провайдера.  
 
 ## Задача 4
 
