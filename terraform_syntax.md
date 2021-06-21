@@ -13,4 +13,19 @@ secret_key     ****************0ldT shared-credentials-file
     region                us-east-2      config-file    ~/.aws/config
 </pre>
 
+Выввод ```aws ec2 describe-instances --profile student``` приводить не буду, поскольку там "личная" информация.
+
+
 ## Задача 2.
+
+### main.ft
+
+[Основной файл конфигурации](terraform/main.tf)
+
+### backend.ft
+
+[Конфигурация бэкенда](terraform/backend.tf)
+
+### provider.ft
+
+[Настройка провайдера](terraform/provider.tf)
