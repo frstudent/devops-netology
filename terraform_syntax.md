@@ -29,3 +29,5 @@ secret_key     ****************0ldT shared-credentials-file
 ### provider.ft
 
 [Настройка провайдера](terraform/provider.tf)
+
+В итоге получилась такая инфраструктура - https://app.terraform.io/fake-web-services
