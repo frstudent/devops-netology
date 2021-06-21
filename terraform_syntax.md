@@ -1,16 +1,17 @@
-# 7.2. Œ·Î‡˜Ì˚Â ÔÓ‚‡È‰Â˚ Ë ÒËÌÚ‡ÍÒËÒ “Â‡ÙÓÏ.
+Ôªø# 7.2. –û–±–ª–∞—á–Ω—ã–µ –ø—Ä–æ–≤–∞–π–¥–µ—Ä—ã –∏ —Å–∏–Ω—Ç–∞–∫—Å–∏—Å –¢–µ—Ä—Ä–∞—Ñ–æ—Ä–º.
 
-## «‡‰‡˜‡ 1.
+## Êó•Êú¨„ÅÆ‰øùËÇ≤Âúí ...
+## –ó–∞–¥–∞—á–∞ 1.
 
-> ¬ ‚Ë‰Â ÂÁÛÎ¸Ú‡Ú‡ Á‡‰‡ÌËˇ ÔËÎÓÊËÚÂ ‚˚‚Ó‰ ÍÓÏ‡Ì‰˚ aws configure list.
+> –í –≤–∏–¥–µ —Ä–µ–∑—É–ª—å—Ç–∞—Ç–∞ –∑–∞–¥–∞–Ω–∏—è –ø—Ä–∏–ª–æ–∂–∏—Ç–µ –≤—ã–≤–æ–¥ –∫–æ–º–∞–Ω–¥—ã aws configure list.
 
 <pre>
-~/terraform/tfc-getting-started$ aws configure list                   Name                    Value             Type    Location
+      Name                    Value             Type    Location
       ----                    -----             ----    --------
-   profile                <not set>             None    None
-access_key     ****************SN7E shared-credentials-file
-secret_key     ****************neB4 shared-credentials-file
+   profile                  student           manual    --profile
+access_key     ****************RAOM shared-credentials-file
+secret_key     ****************0ldT shared-credentials-file
     region                us-east-2      config-file    ~/.aws/config
 </pre>
 
-## «‡‰‡˜‡ 2.
+## –ó–∞–¥–∞—á–∞ 2.
