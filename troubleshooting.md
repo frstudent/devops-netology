@@ -44,24 +44,21 @@ db.killOp(1344808)
 >Redis блокирует операции записи
 >Как вы думаете, в чем может быть проблема?
 
-По ссылке, [приведённой в задании](https://redis.io/topics/latency), дана исчерпавающая информация на этот вопрос. 
-И приведены пути решения.  
-Замечу лишь что рекомендация отключения свойства ядра /sys/kernel/mm/transparent_hugepage дана в руководствах
-по установке Kubernetes. Теперь я понимаю почему.
+<pre>
+redis 127.0.0.1:6379> slowlog get 2
+1) 1) (integer) 14
+   2) (integer) 1309448221
+   3) (integer) 15
+   4) 1) "ping"
+2) 1) (integer) 13
+   2) (integer) 1309448128
+   3) (integer) 30
+   4) 1) "slowlog"
+      2) "get"
+      3) "100"
+</pre>
 
-Помимо "больших страниц" небходимо проверить https://redis.io/commands/slowlog и оптимизировать запросы.  
-
-Озаботиться современным hardware: _"...make sure you use HVM based modern EC2 instances, like m3.medium. Otherwise fork() is too slow."_.
-
-Проверить параметра ядра /proc/sys/vm/overcommit_memory
-```bash
-echo 1 > /proc/sys/vm/overcommit_memory
-```
-
-Измерить латентность и на основе полученных данных проанализировать причины задержек.
-```bash
-redis-cli --latency -h `host` -p `port`
-```
+Вероятно в этот log попадут операции репликации узлов, которые будут блокировать операции записи. 
 
 ## Задача 3
 ### InterfaceError: (InterfaceError) 2013: Lost connection to MySQL server during query u'SELECT..... '
