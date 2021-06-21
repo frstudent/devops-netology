@@ -20,7 +20,7 @@ db.currentOp().inprog.forEach(
     "op": "query",
     "opid": 1349152,
     "query": {"test": 1},
-    "secs_running": 15,
+    "secs_running": 270,
     "waitingForLock": true
   }
 </pre>
