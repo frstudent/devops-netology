@@ -42,25 +42,22 @@ name VARCHAR(30) NOT NULL
 
 # Задача 2
 
-
+Характеристика ситуаций по CAP и PACELC теоремам
 > Данные записываются на все узлы с задержкой до часа (асинхронная запись)
-> А согласно PACELC-теореме, как бы вы классифицировали данные реализации?
 
-CAP: CP (consistency + partition tolerance)  
-PACELC: P
+CAP: PA (partition tolerance + availability)  
+PACELC: PA/EL
 
 > При сетевых сбоях, система может разделиться на 2 раздельных кластера
 
-CAP:  AP (availability + consistency)  
-PACELC: A
+Похоже речь идёт о MongoDB  
+CAP:  PA (partition tolerance + availability)  
+PACELC: PA/EC
 
 > Система может не прислать корректный ответ или сбросить соединение
 
 CAP: CP (consistency + partition tolerance).  
-PACELC: P
-
-Но тут я не уверен в постановке вопроса: _не прислать корректный ответ_ - 
-что под этим подразумеается?
+PACELC: PC/EC
 
 
                         	
