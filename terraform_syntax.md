@@ -43,4 +43,3 @@ https://github.com/frstudent/devops-netology/tree/main/terraform/homework
 
 [Настройка провайдера](terraform/provider.tf)
 
-В итоге получилась такая инфраструктура - https://app.terraform.io/fake-web-services
