@@ -13,10 +13,23 @@ secret_key     ****************0ldT shared-credentials-file
     region                us-east-2      config-file    ~/.aws/config
 </pre>
 
-Выввод ```aws ec2 describe-instances --profile student``` приводить не буду, поскольку там "личная" информация.
+Выввод ```aws ec2 describe-instances --profile student``` приводить не буду, поскольку там "sensitive" информация.
 
 
 ## Задача 2.
+
+>  при помощи какого инструмента (из разобранных на прошлом занятии) можно создать свой образ ami?
+
+На занятии речь шла об инструменте Packer от HashiCorp.
+
+> Ссылку на репозиторий с исходной конфигурацией терраформа.
+
+Пока знакомился с возможностями terraform, я создал несколько конфигураций. Привожу ссылку на файлы конфигурации из задания:  
+
+https://github.com/frstudent/devops-netology/tree/main/terraform/homework
+
+Ниже конфигунация на основе [fake-web-services](https://app.terraform.io/fake-web-services) которая использовалась при знакомстве с terraform.
+
 
 ### main.ft
 
