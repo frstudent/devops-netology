@@ -11,7 +11,7 @@
 
 ## Задача 2. Написать серверный конфиг для атлантиса.
 
-[Файл server.yaml](sevrer.yaml)
+[Файл server.yaml](server.yaml)
 
 [Файл atlantis.yaml](atlantis.yaml)
 
