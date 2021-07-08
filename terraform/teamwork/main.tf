@@ -15,7 +15,6 @@ resource "aws_instance" "source" {
     ebs_optimized                        = false
     get_password_data                    = false
     hibernation                          = false
-    instance_type                        = "t2.micro"
     monitoring                           = false
  
     ebs_block_device {
