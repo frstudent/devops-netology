@@ -17,20 +17,6 @@ resource "aws_instance" "source" {
     hibernation                          = false
     monitoring                           = false
  
-    ebs_block_device {
-        delete_on_termination = false
-        device_name           = "/dev/sdf"
-        encrypted             = false
-        iops                  = 0
-        tags                  = {
-            "mount_point" = "/home"
-        }
-        throughput            = 0
-        volume_id             = "vol-07b7ea2d9729416dc"
-        volume_size           = 4
-        volume_type           = "standard"
-    }
-
     root_block_device {
         delete_on_termination = true
         device_name           = "/dev/xvda"
