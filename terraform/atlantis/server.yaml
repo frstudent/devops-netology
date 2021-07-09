@@ -4,7 +4,8 @@ repos:
   # If using a regex, it must start and end with a slash.
   # Repo ID's are of the form {VCS hostname}/{org}/{repo name}, ex.
   # github.com/runatlantis/atlantis.
-- id: /.*/
+- id: https://github.com/frstudent/devops-netology/tree/main/terraform/teamwork
+
   # branch is an regex matching pull requests by base branch
   # (the branch the pull request is getting merged into).
   # By default, all branches are matched
@@ -19,7 +20,8 @@ repos:
 
   # allowed_overrides specifies which keys can be overridden by this repo in
   # its atlantis.yaml file.
-  allowed_overrides: [apply_requirements, workflow, delete_source_branch_on_merge]
+#  allowed_overrides: [apply_requirements, workflow, delete_source_branch_on_merge]
+  allowed_overrides: [workflow]
 
   # allowed_workflows specifies which workflows the repos that match 
   # are allowed to select.
@@ -36,22 +38,22 @@ repos:
   
   # pre_workflow_hooks defines arbitrary list of scripts to execute before workflow execution.
   pre_workflow_hooks: 
-    - run: my-pre-workflow-hook-command arg1
+    - run: echo "my-pre-workflow-hook-command arg1"
 
   # id can also be an exact match.
-- id: github.com/myorg/specific-repo
+# - id: github.com/myorg/specific-repo
 
 # workflows lists server-side custom workflows
 workflows:
   custom:
     plan:
       steps:
-      - run: my-custom-command arg1 arg2
+      - run: echo "Plan for server side repo config"
       - init
       - plan:
           extra_args: ["-lock", "false"]
-      - run: my-custom-command arg1 arg2
+      - run: echo "Server side plan finished"
     apply:
       steps:
-      - run: echo hi
+      - run: echo "Apply for server side repor config"
       - apply
