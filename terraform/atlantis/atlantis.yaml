@@ -20,7 +20,8 @@ workflows:
 #      - run: my-custom-command arg1 arg2
       - init
       - plan:
-          extra_args: ["-lock", "false"]
+# Override sevrer-side repor config      
+          extra_args: ["-lock", "true"]
       - run: echo "Planning devrlopment"
     apply:
       steps:
