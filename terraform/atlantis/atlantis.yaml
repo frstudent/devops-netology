@@ -8,10 +8,11 @@ projects:
   terraform_version: v1.0.2
   delete_source_branch_on_merge: true
   autoplan:
-    when_modified: ["*.tf", "../modules/**.tf"]
+#    when_modified: ["*.tf", "../modules/**.tf"]
+    when_modified: ["*.tf"]
     enabled: true
   apply_requirements: [mergeable, approved]
-  workflow: myworkflow
+  workflow: stage
 workflows:
   stage:
     plan:
@@ -19,11 +20,11 @@ workflows:
 #      - run: my-custom-command arg1 arg2
       - init
       - plan:
-#          extra_args: ["-lock", "true"]
-#      - run: my-custom-command arg1 arg2
+          extra_args: ["-lock", "false"]
+      - run: echo "Planning devrlopment"
     apply:
       steps:
-#      - run: echo hi
+      - run: echo "Applying development"
       - apply
   prod:
     plan:
@@ -31,9 +32,8 @@ workflows:
 #      - run: my-custom-command arg1 arg2
       - init
       - plan:
-#          extra_args: ["-lock", "true"]
-#      - run: my-custom-command arg1 arg2
+      - run: echo "Planning production"
     apply:
       steps:
-#      - run: echo hi
+      - run: echo "Applying production"
       - apply
