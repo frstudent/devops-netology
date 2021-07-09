@@ -13,7 +13,19 @@ projects:
   apply_requirements: [mergeable, approved]
   workflow: myworkflow
 workflows:
-  myworkflow:
+  stage:
+    plan:
+      steps:
+#      - run: my-custom-command arg1 arg2
+      - init
+      - plan:
+#          extra_args: ["-lock", "true"]
+#      - run: my-custom-command arg1 arg2
+    apply:
+      steps:
+#      - run: echo hi
+      - apply
+  prod:
     plan:
       steps:
 #      - run: my-custom-command arg1 arg2
