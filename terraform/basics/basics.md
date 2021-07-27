@@ -21,9 +21,11 @@ terraform {
 
 > Вывод команды terraform workspace list.
 
+<pre>
   default
   prod
 * stage
+</pre>
 
 > Вывод команды terraform plan для воркспейса prod.
 
