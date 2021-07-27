@@ -13,7 +13,7 @@ terraform {
   }
 }
 ```
-В задании предлагается использовать блокировку ресурсов с помощью DynamoDB. Terraform import отказывался работать без создания таблицы. Пришлось в WEB-интерфейса создать таблицу frstudent-tf-locks и после этого terraform зврвботвл.
+В задании предлагается использовать блокировку ресурсов с помощью DynamoDB. Terraform import отказывался работать без создания таблицы. Пришлось в WEB-интерфейса создать таблицу frstudent-tf-locks и после этого terraform зврвботал.
 
 Результат terraform state pull - [resources.yml](resources.yml)
 
