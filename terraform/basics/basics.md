@@ -19,6 +19,43 @@ terraform {
 
 ## Инициализируем проект и создаем воркспейсы.
 
-Ну что, всппомним стеденческие годы? Сдаю задание и остаётся ночь на выполнение. Надеюсь преподаватель не будет проверять ночью.
-К утру тут должно быть решение.
+> Вывод команды terraform workspace list.
 
+  default
+  prod
+* stage
+
+> Вывод команды terraform plan для воркспейса prod.
+
+Ещё одна ночь понадобится. Пока что plan не сработал:
+<pre>
+Acquiring state lock. This may take a few moments...
+Releasing state lock. This may take a few moments...
+╷
+│ Error: Missing required argument
+│
+│   with aws_instance.debian,
+│   on main.tf line 28, in resource "aws_instance" "debian":
+│   28: resource "aws_instance" "debian" {
+│
+│ "instance_type": one of `instance_type,launch_template` must be specified
+╵
+╷
+│ Error: Missing required argument
+│
+│   with aws_instance.debian,
+│   on main.tf line 28, in resource "aws_instance" "debian":
+│   28: resource "aws_instance" "debian" {
+│
+│ "launch_template": one of `ami,instance_type,launch_template` must be specified
+╵
+╷
+│ Error: Missing required argument
+│
+│   with aws_instance.debian,
+│   on main.tf line 28, in resource "aws_instance" "debian":
+│   28: resource "aws_instance" "debian" {
+│
+│ "ami": one of `ami,launch_template` must be specified
+╵
+</pre>
