@@ -36,3 +36,9 @@ $ terrafrom plan -no-color > plan_output.txt
 
 Собственно вывод - [plan_output.txt](plan_output.txt)
 
+Файлы проекта:
+[main.tf](main.tf)
+
+[backend.tf](backend.tf)
+
+[versions.td](versions.td)
