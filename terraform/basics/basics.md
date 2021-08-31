@@ -29,6 +29,10 @@ terraform {
 
 > Вывод команды terraform plan для воркспейса prod.
 
+```bash
 $ terraform workspace select prod
-$ terrafrom plan -no-color > [plan_output.txt](plan_output.txt)
+$ terrafrom plan -no-color > plan_output.txt
+```
+
+Собственно вывод - [plan_output.txt](plan_output.txt)
 
