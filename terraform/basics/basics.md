@@ -43,3 +43,6 @@ $ terrafrom plan -no-color > plan_output.txt
 [backend.tf](backend.tf)
 
 [versions.td](versions.td)
+
+## Результат работы terraform apply
+![Amazon panel](./Amazon.png)
