@@ -45,18 +45,6 @@ resource "aws_instance" "debian_netology" {
     instance_type = var.cur_instance_type[terraform.workspace]
     count = local.instance_count_map[terraform.workspace]
 
-    provisioner "file" {
-       source = "./main.tf"
-       destination = "/root/main.tf"
-
-#       connection {
-#         type = "ssh"
-#         user = "devops"
-#         password = "${var.password}"
-#         host = "${self.public_ip}"
-#       } 
-    }
-
     provisioner "local-exec" {
         command = "echo ${self.private_ip} >> private_ips.txt"
     }
