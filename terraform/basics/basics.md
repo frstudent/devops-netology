@@ -46,3 +46,9 @@ $ terrafrom plan -no-color > plan_output.txt
 
 ## Результат работы terraform apply
 ![Amazon panel](./Amazon.png)
+
+## Удаление ресурсов проекта на Amazon
+
+```bash
+terraform destroy
+```
