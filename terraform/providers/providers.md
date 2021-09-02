@@ -84,3 +84,5 @@ load any plugins automatically
 git clone --branch boilerplate https://github.com/hashicorp/terraform-provider-hashicups```
 
 > 3. Попробуйте скомпилировать провайдер, если получится то приложите снимок экрана с командой и результатом компиляции.
+
+![hashicups.png](hashicups.png)
