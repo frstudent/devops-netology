@@ -86,8 +86,7 @@ Please execute the program that consumes these plugins, which will
 load any plugins automatically
 ```
 
-В директории /terraform-provider-hashicups/examples$
-
+В директории terraform-provider-hashicups/examples$
 сделал 
 <pre>
 terraform init
