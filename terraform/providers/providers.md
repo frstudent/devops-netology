@@ -6,12 +6,15 @@
 
 AWS_SOURCE=~/terraform/aws_provider
 
-FILES=`ls "$AWS_SOURCE/terraform-provider-aws/aws/go" | grep -e '^resource' -e '^data_source' | grep -v "test."`
+FILES=`ls "$AWS_SOURCE/terraform-provider-aws/aws/" | grep -e '^resource' -e '^data_source' | grep -v "test."`
 for source in ${FILES}
 do
-   echo $source
+   line=`cat "$AWS_SOURCE/terraform-provider-aws/aws/$source" | grep -n 'Schema:' | awk '{print $1}' FS=":" | head -n1`
+   echo  "https://github.com/hashicorp/terraform-provider-aws/blob/main/aws/$source#L$line"
 done
 ```
+
+Вот этот скрпит сгенерирует 1024 ссылки на все доступные resource и data_source
 
 > Для создания очереди сообщений SQS используется ресурс aws_sqs_queue у которого есть параметр name. С каким другим параметром конфликтует name? Приложите строчку кода, в которой это указано.
 
