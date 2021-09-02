@@ -81,7 +81,8 @@ load any plugins automatically
 
 Поскольку задание не обязательное, я взял для теста готовый пример 
 ```bash
-git clone --branch boilerplate https://github.com/hashicorp/terraform-provider-hashicups```
+git clone --branch boilerplate https://github.com/hashicorp/terraform-provider-hashicups
+```
 
 > 3. Попробуйте скомпилировать провайдер, если получится то приложите снимок экрана с командой и результатом компиляции.
 
