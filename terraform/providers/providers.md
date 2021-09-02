@@ -97,4 +97,4 @@ terraform apply
 
 Экран после команды apply
 
-![hashicups.png](hashicups.png)
+![hashicups1.png](hashicups1.png)
