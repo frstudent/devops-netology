@@ -1,4 +1,7 @@
 # Решение домашнего задание к занятию "7.6. Написание собственных провайдеров для Terraform."
+
+## Задача 1
+
 > Найдите, где перечислены все доступные resource и data_source, приложите ссылку на эти строки в коде на гитхабе.
 
 Но там 1074 файла.
@@ -59,3 +62,25 @@ Cимволы латинского алфавита в верхнем и ниж�
                 }
 
 ```
+
+## Задача 2
+
+> 1. Проделайте все шаги создания провайдера.
+
+```bash
+devops@frcloud3:~/terraform/provider/learn-terraform-hashicups-provider/tea/terraform-provider-hashicups$ make build
+go build -o terraform-provider-hashicups
+
+devops@frcloud3:~/terraform/provider/learn-terraform-hashicups-provider/tea/terraform-provider-hashicups$ ./terraform-provider-hashicups
+This binary is a plugin. These are not meant to be executed directly.
+Please execute the program that consumes these plugins, which will
+load any plugins automatically
+```
+
+> 2. В виде результата приложение ссылку на исходный код.
+
+Поскольку задание не обязательное, я взял для теста готовый пример 
+```bash
+git clone --branch boilerplate https://github.com/hashicorp/terraform-provider-hashicups```
+
+> 3. Попробуйте скомпилировать провайдер, если получится то приложите снимок экрана с командой и результатом компиляции.
